@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Log.d("TAG","START")
-                    Greeting("Daily News")
+                    GreetingPreview()
                 }
             }
         }
