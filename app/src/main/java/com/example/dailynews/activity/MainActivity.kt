@@ -1,6 +1,6 @@
 package com.example.dailynews.activity
 
-import android.app.Activity
+import com.example.dailynews.base.BaseActivity
 
-class MainActivity: Activity() {
+class MainActivity: BaseActivity() {
 }

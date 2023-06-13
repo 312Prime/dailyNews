@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.DailyNews.SplashScreen">
+        <item name="android:windowSplashScreenBackground">#442233</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_background</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/white</item>
+        <item name="android:windowSplashScreenAnimationDuration">5000</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/ic_launcher_foreground</item>
+    </style>
+</resources>
