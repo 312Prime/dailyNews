@@ -10,15 +10,29 @@ import android.view.ViewTreeObserver
 import android.view.animation.AnticipateInterpolator
 import androidx.core.animation.doOnEnd
 import com.example.dailynews.base.BaseActivity
+import com.example.dailynews.databinding.ActivityIntroBinding
 import kotlin.concurrent.thread
 
 class IntroActivity : BaseActivity() {
+    private val binding by lazy {
+        ActivityIntroBinding.inflate(layoutInflater)
+    }
 
     private var isReady = false
     private var isStart = false
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
+        setBinding()
+    }
+
+    private fun setBinding() {
+        with(binding) {
+            with(root) {
+                setContentView(this)
+            }
+        }
+//        initSplashScreen()
     }
 
     private fun initSplashScreen() {

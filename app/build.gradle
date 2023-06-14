@@ -37,15 +37,12 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures {
-        compose true
+        compose false
         buildFeatures {
             viewBinding true
             dataBinding true
             buildConfig true
         }
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.4.3'
     }
     packagingOptions {
         resources {
@@ -63,7 +60,10 @@ dependencies {
 
     implementation deps.glide.core
     implementation deps.glide.okhttp
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
 
     // 그래들 비호환
-//    kapt deps.glide.complier
+    kapt deps.glide.kapt
 }
