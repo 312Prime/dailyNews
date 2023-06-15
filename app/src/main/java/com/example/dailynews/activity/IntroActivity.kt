@@ -5,10 +5,12 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.animation.AnticipateInterpolator
 import androidx.core.animation.doOnEnd
+import com.example.dailynews.R
 import com.example.dailynews.base.BaseActivity
 import com.example.dailynews.databinding.ActivityIntroBinding
 import kotlin.concurrent.thread
@@ -23,6 +25,8 @@ class IntroActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
+        setContentView(R.layout.activity_intro)
+        Log.d("DTE","DTE")
         setBinding()
     }
 

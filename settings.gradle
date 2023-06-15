@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "dailyNews"
 include ':app'
+include ':daily_news-core'
