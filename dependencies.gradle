@@ -1,24 +1,28 @@
 ext {
     versions = [
-            "coreKtx"         : "1.7.0",
-            "appCompat"       : "1.4.1",
-            "activityKtx"     : "1.4.0",
-            "fragmentKtx"     : "1.4.1",
-            "material"        : "1.6.0",
-            "constraintLayout": "2.1.4",
-            "recyclerView"    : "1.2.1",
-            "annotation"      : "1.3.0",
-            "gridlayout"      : "1.0.0",
-            "koin"            : "3.3.0",
-            "coroutines"      : "1.6.1",
-            "glide"           : "4.13.2",
-            "lifecycle"       : "2.4.1",
-            "playServices"    : "4.3.10",
-            "retrofit"        : "2.9.0",
-            "junit"           : "4.13.2",
-            "junitext"        : "1.1.3",
-            "espresso"        : "3.4.0",
-            "splash"          : "1.0.0-alpha02"
+            "coreKtx"               : "1.7.0",
+            "appCompat"             : "1.4.1",
+            "activityKtx"           : "1.4.0",
+            "fragmentKtx"           : "1.4.1",
+            "material"              : "1.6.0",
+            "constraintLayout"      : "2.1.4",
+            "recyclerView"          : "1.2.1",
+            "annotation"            : "1.3.0",
+            "gridlayout"            : "1.0.0",
+            "koin"                  : "3.3.0",
+            "coroutines"            : "1.6.1",
+            "glide"                 : "4.13.2",
+            "gson"                  : "2.9.0",
+            "exoplayer"             : "2.17.1",
+            "lottie"                : "4.2.2",
+            "lifecycle"             : "2.4.1",
+            "playServices"          : "4.3.10",
+            "retrofit"              : "2.9.0",
+            "junit"                 : "4.13.2",
+            "junitext"              : "1.1.3",
+            "espresso"              : "3.4.0",
+            "leakcanary"            : "2.9.1",
+            "chucker"               : "3.5.2"
     ]
     deps = [
             "kotlin" : [
@@ -27,48 +31,55 @@ ext {
                     "coroutinesAndroid"     : "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}",
                     "coroutinesPlayServices": "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:${versions.coroutines}"
             ],
-            "jetpack": [
-                    "appCompat"       : "androidx.appcompat:appcompat:${versions.appCompat}",
-                    "recyclerView"    : "androidx.recyclerview:recyclerview:${versions.recyclerView}",
-                    "ktx"             : "androidx.core:core-ktx:${versions.coreKtx}",
-                    "activity"        : "androidx.activity:activity-ktx:${versions.activityKtx}",
-                    "fragment"        : "androidx.fragment:fragment-ktx:${versions.fragmentKtx}",
-                    "gridlayout"      : "androidx.gridlayout:gridlayout:${versions.gridlayout}",
-                    "material"        : "com.google.android.material:material:${versions.material}",
-                    "constraintLayout": "androidx.constraintlayout:constraintlayout:${versions.constraintLayout}",
-                    "annotation"      : "androidx.annotation:annotation:${versions.annotation}",
-                    "splashScreen"    : "androidx.core:core-splashscreen:${versions.splash}",
+            "jetpack"         : [
+                    "appCompat"            : "androidx.appcompat:appcompat:${versions.appCompat}",
+                    "recyclerView"         : "androidx.recyclerview:recyclerview:${versions.recyclerView}",
+                    "ktx"                  : "androidx.core:core-ktx:${versions.coreKtx}",
+                    "activity"             : "androidx.activity:activity-ktx:${versions.activityKtx}",
+                    "fragment"             : "androidx.fragment:fragment-ktx:${versions.fragmentKtx}",
+                    "gridlayout"           : "androidx.gridlayout:gridlayout:${versions.gridlayout}",
+                    "material"             : "com.google.android.material:material:${versions.material}",
+                    "constraintLayout"     : "androidx.constraintlayout:constraintlayout:${versions.constraintLayout}",
+                    "annotation"           : "androidx.annotation:annotation:${versions.annotation}",
 
-                    "lifecycle"       : [
-                            "liveData"  : "androidx.lifecycle:lifecycle-livedata-ktx:${versions.lifecycle}",
-                            "viewModel" : "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}",
-                            "runtime"   : "androidx.lifecycle:lifecycle-runtime-ktx:${versions.lifecycle}",
-                            "process"   : "androidx.lifecycle:lifecycle-process:${versions.lifecycle}",
-                            "service"   : "androidx.lifecycle:lifecycle-service:${versions.lifecycle}",
-                            "savedstate": "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.lifecycle}"
+                    "lifecycle"            : [
+                            "liveData"     : "androidx.lifecycle:lifecycle-livedata-ktx:${versions.lifecycle}",
+                            "viewModel"    : "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}",
+                            "runtime"      : "androidx.lifecycle:lifecycle-runtime-ktx:${versions.lifecycle}",
+                            "process"      : "androidx.lifecycle:lifecycle-process:${versions.lifecycle}",
+                            "service"      : "androidx.lifecycle:lifecycle-service:${versions.lifecycle}",
+                            "savedstate"   : "androidx.lifecycle:lifecycle-viewmodel-savedstate:${versions.lifecycle}"
                     ]
 
             ],
-            "koin"   : [
-                    "android"      : "io.insert-koin:koin-android:${versions.koin}",
-                    "androidCompat": "io.insert-koin:koin-android-compat:${versions.koin}",
-                    "workmanager"  : "io.insert-koin:koin-androidx-workmanager:${versions.koin}"
+            "koin"                         : [
+                    "android"              : "io.insert-koin:koin-android:${versions.koin}",
+                    "androidCompat"        : "io.insert-koin:koin-android-compat:${versions.koin}",
+                    "workmanager"          : "io.insert-koin:koin-androidx-workmanager:${versions.koin}"
             ],
-            "glide"  : [
-                    "core"    : "com.github.bumptech.glide:glide:${versions.glide}",
-                    "compiler": "com.github.bumptech.glide:compiler:${versions.glide}",
-                    "okhttp"  : "com.github.bumptech.glide:okhttp3-integration:${versions.glide}",
-                    "kapt"    : "com.github.bumptech.glide:compiler:${versions.glide}"
+            "glide"                        : [
+                    "core"                 : "com.github.bumptech.glide:glide:${versions.glide}",
+                    "compiler"             : "com.github.bumptech.glide:compiler:${versions.glide}",
+                    "okhttp"               : "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
             ],
-            "network": [
-                    "core"   : "com.squareup.retrofit2:retrofit:${versions.retrofit}",
-                    "adapter": "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+            "exoplayer"                    : "com.google.android.exoplayer:exoplayer:${versions.exoplayer}",
+            "lottie"                       : "com.airbnb.android:lottie:${versions.lottie}",
+            "timber"                       : "com.jakewharton.timber:timber:${versions.timber}",
+            "gson"                         : "com.google.code.gson:gson:${versions.gson}",
+            "network"                      : [
+                    "core"                 : "com.squareup.retrofit2:retrofit:${versions.retrofit}",
+                    "adapter"              : "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
             ],
-    ]
-
-    networkDeps = [
-            deps.network.core,
-            deps.network.adapter
+            "leakcanary"                   : "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}",
+            "chucker"                      : [
+                    "library"              : "com.github.chuckerteam.chucker:library:${versions.chucker}",
+                    "noOp"                 : "com.github.chuckerteam.chucker:library-no-op:${versions.chucker}"
+            ],
+            "test"                         : [
+                    "junit"                : "junit:junit:${versions.junit}",
+                    "junitext"             : "androidx.test.ext:junit:${versions.junitext}",
+                    "espressoCore"         : "androidx.test.espresso:espresso-core:${versions.espresso}"
+            ]
     ]
 
     coroutines = [
@@ -102,5 +113,19 @@ ext {
             deps.koin.workmanager
     ]
 
+    networkDeps = [
+            deps.gson,
+            deps.network.core,
+            deps.network.adapter
+    ]
 
+    androidTestDeps = [
+            deps.test.junit,
+            deps.test.junitext,
+            deps.test.espressoCore
+    ]
+
+    testDeps = [
+            deps.test.junit
+    ]
 }

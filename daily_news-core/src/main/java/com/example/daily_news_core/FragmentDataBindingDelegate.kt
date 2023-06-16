@@ -1,4 +1,4 @@
-package com.example.daily_news_core.logger
+package com.example.daily_news_core
 
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding

@@ -1,17 +1,17 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
-    namespace 'com.example.dailynews'
-    compileSdk 34
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.example.dailynews"
-        minSdk 24
-        targetSdk 34
+        minSdk 26
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -37,21 +37,22 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures {
-        compose false
         buildFeatures {
             viewBinding true
             dataBinding true
             buildConfig true
         }
     }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
+//    packagingOptions {
+//        resources {
+//            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+//        }
+//    }
+    namespace 'com.example.dailynews'
 }
 
 dependencies {
+    implementation project(":daily_news-core")
 
     implementation(jetpackDeps)
     implementation(coroutines)
@@ -60,10 +61,25 @@ dependencies {
 
     implementation deps.glide.core
     implementation deps.glide.okhttp
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-
     // 그래들 비호환
-    kapt deps.glide.kapt
+    kapt deps.glide.compiler
+
+    // 3rd-party
+    implementation deps.lottie
+    implementation deps.exoplayer
+
+    // testing
+    testImplementation(testDeps)
+    androidTestImplementation(androidTestDeps)
+
+    // leak-canary, chucker
+    debugImplementation deps.leakcanary
+    debugImplementation deps.chucker.library
+    releaseImplementation deps.chucker.noOp
+
+//    implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.4.2'
+
 }
