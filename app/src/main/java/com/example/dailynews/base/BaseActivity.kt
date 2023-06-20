@@ -10,8 +10,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
-        Log.d("TAG","$this")
-        supportActionBar?.hide()
     }
 
     // Navigation

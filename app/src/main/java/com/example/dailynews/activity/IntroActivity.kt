@@ -17,25 +17,19 @@ import com.example.dailynews.tools.logger.Logger
 import kotlin.concurrent.thread
 
 class IntroActivity : BaseActivity() {
-    private val binding by lazy {
-        ActivityIntroBinding.inflate(layoutInflater)
-    }
+    private val binding by lazy { ActivityIntroBinding.inflate(layoutInflater) }
 
     private var isReady = false
     private var isStart = false
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        setContentView(R.layout.activity_intro)
-        Logger.debug("DTE INTRO",Configuration.Developer.SI)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setBinding()
     }
 
     private fun setBinding() {
         with(binding) {
-            with(root) {
-                setContentView(this)
-            }
+            setContentView(this.root)
         }
         initSplashScreen()
     }
