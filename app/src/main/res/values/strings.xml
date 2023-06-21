@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">하루 시작</string>
+    <string name="bottom_navigation_first">날씨</string>
+    <string name="bottom_navigation_second">뉴스</string>
+    <string name="bottom_navigation_third">알람</string>
+    <string name="bottom_navigation_forth">할일</string>
+    <string name="intro_title">DAILY NEWS\n오늘의 뉴스</string>
 </resources>

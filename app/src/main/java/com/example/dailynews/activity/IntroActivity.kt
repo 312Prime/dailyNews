@@ -37,7 +37,7 @@ class IntroActivity : BaseActivity() {
     private fun initSplashScreen() {
         initData()
 
-        val content: View = findViewById(android.R.id.content)
+        val content: View = binding.root
         content.viewTreeObserver.addOnPreDrawListener(
             object : ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
