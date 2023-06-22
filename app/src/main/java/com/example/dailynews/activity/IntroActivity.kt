@@ -17,7 +17,9 @@ import com.example.dailynews.tools.logger.Logger
 import kotlin.concurrent.thread
 
 class IntroActivity : BaseActivity() {
-    private val binding by lazy { ActivityIntroBinding.inflate(layoutInflater) }
+    private val binding by lazy {
+        ActivityIntroBinding.inflate(layoutInflater)
+    }
 
     private var isReady = false
     private var isStart = false
