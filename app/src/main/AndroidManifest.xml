@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".koin.KoinApplication"
@@ -12,9 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DailyNews"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".activity.IntroActivity"
-            android:exported="true"/>
         <activity
             android:name=".activity.MainActivity"
             android:exported="true" >

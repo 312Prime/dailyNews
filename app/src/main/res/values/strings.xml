@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">하루 시작</string>
+    <string name="app_name">데일리 뉴스</string>
     <string name="bottom_navigation_first">날씨</string>
     <string name="bottom_navigation_second">뉴스</string>
     <string name="bottom_navigation_third">알람</string>
     <string name="bottom_navigation_forth">할일</string>
     <string name="intro_title">DAILY NEWS\n오늘의 뉴스</string>
+    <string name="weather_url">http://api.openweathermap.org/</string>
+    <string name="weather_key">fb3803403b871b34a30c7c61743e57e8</string>
 </resources>

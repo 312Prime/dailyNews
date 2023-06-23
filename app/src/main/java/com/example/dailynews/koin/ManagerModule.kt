@@ -1,9 +1,11 @@
 package com.example.dailynews.koin
 
+import com.example.dailynews.data.remote.RestfulManager
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
 object ManagerModule {
     val module = module {
-//        single{ xxManager() }
+        single{ RestfulManager(androidApplication()) }
     }
 }
