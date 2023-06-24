@@ -7,6 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+// 날씨 API Model
 interface WeatherAPIService {
 
     @GET("data/2.5/{path}")

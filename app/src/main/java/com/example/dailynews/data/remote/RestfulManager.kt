@@ -10,6 +10,7 @@ import okhttp3.Request
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
+// Restful Main Class /추후 수정 필요
 class RestfulManager(val context: Context) {
 
     private val chuckerInterceptor = ChuckerInterceptor
@@ -25,6 +26,7 @@ class RestfulManager(val context: Context) {
         .alwaysReadResponseBody(true)
         .build()
 
+    // 통신 메인 retroFit
     private val retrofit by lazy {
         Retrofit.Builder()
             .client(
@@ -44,6 +46,7 @@ class RestfulManager(val context: Context) {
             )
     }
 
+    // 통신시 log 남기기
     private fun log(request: Request) {
         val url = request.url()
         val headers = request.headers()

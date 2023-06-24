@@ -9,6 +9,7 @@ import com.example.dailynews.R
 import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentWeatherBinding
 
+// 날씨 Fragment
 class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
 
     private var _binding: FragmentWeatherBinding? = null
