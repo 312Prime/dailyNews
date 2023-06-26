@@ -23,15 +23,34 @@ class WeatherViewModel(
         weatherRepository.getWeatherInfo(jsonObject = jsonObject,
             onResponse = {
                 if (it.isSuccessful) {
-                    Logger.debug("DTE getWeatherInfoView() - Succ :  + ${it.body()}")
+                    Logger.debug("DTE getWeatherInfoView() - Success : ${it.body()}")
                     isSuccessWeather.value = true
                     responseWeather.value = it.body()
                 }
             },
             onFailure = {
                 it.printStackTrace()
-                Logger.debug("DTE getWeatherInfoView() - Fail :  + ${it.message}")
+                Logger.debug("DTE getWeatherInfoView() - Failure : ${it.message}")
 
+            }
+        )
+
+    }
+
+    fun getForecastInfoView(jsonObject: JSONObject) {
+        Logger.debug("getForecastInfoView() - jsonObject : $jsonObject")
+
+        weatherRepository.getForecastInfo(jsonObject = jsonObject,
+            onResponse = {
+                if (it.isSuccessful) {
+                    isSuccessForecast.value = true
+                    Logger.debug("getForecastInfoView() - Success : ${it.body()}")
+                    responseForecast.value = it.body()
+                }
+            },
+            onFailure = {
+                it.printStackTrace()
+                Logger.debug("getForecastInfoView() - Failure : ${it.message}")
             }
         )
 
