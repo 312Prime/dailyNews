@@ -7,4 +7,5 @@
     <string name="intro_title">DAILY NEWS\n오늘의 뉴스</string>
     <string name="weather_url">http://api.openweathermap.org/</string>
     <string name="weather_key">fb3803403b871b34a30c7c61743e57e8</string>
+    <string name="weather_title">오늘의 날씨</string>
 </resources>

@@ -12,8 +12,8 @@ class WeatherViewModel(
     private val weatherRepository: WeatherRepository
 ) : BaseViewModel() {
 
-    val isSuccessWeather = MutableLiveData(false)
-    val isSuccessForecast = MutableLiveData(false)
+    val isSuccessWeather = MutableLiveData<Boolean>()
+    val isSuccessForecast = MutableLiveData<Boolean>()
     val responseWeather = MutableLiveData<WeatherModel>()
     val responseForecast = MutableLiveData<ForecastModel>()
 

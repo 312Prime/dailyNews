@@ -62,7 +62,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
         jsonObject.put("url", getString(R.string.weather_url))
         jsonObject.put("path", "weather")
         jsonObject.put("q", "Seoul")
-        jsonObject.put("appid", "key값")
+        jsonObject.put("appid", getString(R.string.weather_key))
         viewModel.getWeatherInfoView(jsonObject)
     }
 
