@@ -1,5 +1,9 @@
 package com.example.dailynews.fragments
 
+import android.content.Context.LOCATION_SERVICE
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
@@ -13,8 +17,10 @@ import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentWeatherBinding
 import com.example.dailynews.model.WeatherModel
 import com.example.dailynews.tools.customDialog.CustomDialog
+import com.example.dailynews.tools.logger.Logger
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.Locale
 
 // 날씨 Fragment
 class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
@@ -22,11 +28,14 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
     private var _binding: FragmentWeatherBinding? = null
 
     private val binding get() = _binding!!
+    private lateinit var locationManager: LocationManager
+    private lateinit var locationListener: LocationListener
+
+    private var currentLat = 0.0
+    private var currentLong = 0.0
 
     private val viewModel by viewModel<WeatherViewModel>()
 
-    @RequiresApi(Build.VERSION_CODES.S)
-    private val locationManager = LocationManager.KEY_LOCATIONS
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,9 +50,20 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
         return binding.root
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
+        locationListener = LocationListener {
+            currentLat = it.latitude
+            currentLong= it.longitude
+        }
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setBinding()
+        getCityName()
         initWeatherInfoViewModel()
         observeData()
     }
@@ -81,6 +101,21 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
                 }
             }
         )
+    }
+
+    private fun getCityName(): String {
+//        locationManager = getSystemService
+        var cityName: String?
+//        val geoCoder = Geocoder(requireContext(), Locale.getDefault())
+//        val address = geoCoder.getFromLocation(lat, long, 1)
+//        cityName = address[0].adminArea
+//        if (cityName == null) {
+//            cityName = address[0].locality
+//            if (cityName == null) {
+//                cityName = address[0].subAdminArea
+//            }
+//        }
+        return "cityName"
     }
 
     private fun setWeatherData(model: WeatherModel) {

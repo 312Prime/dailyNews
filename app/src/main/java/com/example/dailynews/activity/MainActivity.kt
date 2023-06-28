@@ -1,12 +1,18 @@
 package com.example.dailynews.activity
 
+import android.Manifest
 import android.animation.ObjectAnimator
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.animation.AnticipateInterpolator
 import androidx.core.animation.doOnEnd
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.example.dailynews.base.BaseActivity
@@ -15,6 +21,7 @@ import com.example.dailynews.fragments.AlarmFragment
 import com.example.dailynews.fragments.NewsFragment
 import com.example.dailynews.fragments.TodoFragment
 import com.example.dailynews.fragments.WeatherFragment
+import com.example.dailynews.tools.logger.Logger
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.concurrent.thread
 
@@ -40,7 +47,7 @@ class MainActivity : BaseActivity() {
         with(binding) {
             setContentView(this.root)
             supportFragmentManager.commit {
-                replace(frameLayoutId,getFragment("날씨"))
+                replace(frameLayoutId, getFragment("날씨"))
             }
             mainBottomNavigationView.setOnItemSelectedListener {
                 switchToFragment(it.toString())

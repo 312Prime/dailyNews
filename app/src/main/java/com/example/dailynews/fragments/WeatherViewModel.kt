@@ -17,6 +17,8 @@ class WeatherViewModel(
     val responseWeather = MutableLiveData<WeatherModel>()
     val responseForecast = MutableLiveData<ForecastModel>()
 
+    val cityName = MutableLiveData("Seoul")
+
     fun getWeatherInfoView(jsonObject: JSONObject) {
         Logger.debug("DTE getWeatherInfoView() - jsonObject : $jsonObject")
 
