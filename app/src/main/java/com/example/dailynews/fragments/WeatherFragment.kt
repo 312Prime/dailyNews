@@ -101,9 +101,19 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setObserver() {
         viewModel.cityName.observe(viewLifecycleOwner) {
             binding.weatherCityName.text = it
+        }
+        viewModel.responseWeather.observe(viewLifecycleOwner) {
+            binding.weatherTemperatureState.text =
+                if (it.main.temperature == null) "오류" else it.main.temperature.toString()
+            binding.weatherSkyState.text = it.weather[0].main
+            binding.weatherCloudShapeState.text = it.weather[0].description
+            binding.weatherWindState.text = it.wind.speed.toString() + " m/s"
+            binding.weatherCloudState.text = it.clouds.all.toString() + " %"
+            binding.weatherHumidity.text = it.main.humidity.toString() + " %"
         }
     }
 
