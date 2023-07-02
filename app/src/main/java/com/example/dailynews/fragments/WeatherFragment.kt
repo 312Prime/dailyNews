@@ -28,6 +28,8 @@ import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.util.Locale
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 // 날씨 Fragment
 class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
@@ -108,7 +110,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
         }
         viewModel.responseWeather.observe(viewLifecycleOwner) {
             binding.weatherTemperatureState.text =
-                if (it.main.temperature == null) "오류" else it.main.temperature.toString()
+                if (it.main.temp == null) "미확인" else "%.1f'c".format(it.main.temp!! - 273.15)
             binding.weatherSkyState.text = it.weather[0].main
             binding.weatherCloudShapeState.text = it.weather[0].description
             binding.weatherWindState.text = it.wind.speed.toString() + " m/s"

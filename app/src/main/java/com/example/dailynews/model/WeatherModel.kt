@@ -27,8 +27,8 @@ data class WeatherWeatherModel(
 )
 
 data class WeatherMainModel(
-    @SerializedName("temperature")
-    var temperature: Float?,
+    @SerializedName("temp")
+    var temp: Float?,
     @SerializedName("humidity")
     var humidity: Float?
 )
