@@ -18,7 +18,9 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.dailynews.R
+import com.example.dailynews.adapter.WeatherAdapter
 import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentWeatherBinding
 import com.example.dailynews.model.WeatherModel
@@ -41,6 +43,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
 
     private val viewModel by viewModel<WeatherViewModel>()
 
+    private val weatherAdapter by lazy { WeatherAdapter() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,6 +103,10 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
 
     private fun setBinding() {
         with(binding) {
+            with(weatherRecyclerView){
+//                adapter = weatherAdapter.also { it.initList(viewModel.) }
+//                layoutManager = GridLayoutManager(requireContext(),3)
+            }
         }
     }
 
@@ -110,22 +117,12 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
         }
         viewModel.responseWeather.observe(viewLifecycleOwner) {
             binding.weatherTemperatureState.text =
-                if (it.main.temp == null) "미확인" else "%.1f'c".format(it.main.temp!! - 273.15)
-            binding.weatherSkyState.text = it.weather[0].main
+                if (it.main.temp == null) "미확인" else "%.1f 'c".format(it.main.temp!! - 273.15)
             binding.weatherCloudShapeState.text = it.weather[0].description
             binding.weatherWindState.text = it.wind.speed.toString() + " m/s"
             binding.weatherCloudState.text = it.clouds.all.toString() + " %"
             binding.weatherHumidity.text = it.main.humidity.toString() + " %"
         }
-    }
-
-    private fun initWeatherInfoViewModel(cityName: String) {
-        val jsonObject = JSONObject()
-        jsonObject.put("url", getString(R.string.weather_url))
-        jsonObject.put("path", "weather")
-        jsonObject.put("q", cityName)
-        jsonObject.put("appid", getString(R.string.weather_key))
-        viewModel.getWeatherInfoView(jsonObject)
     }
 
     private fun observeData() {
@@ -140,6 +137,18 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
                 } else {
                     val customDialog = CustomDialog(requireContext())
                     customDialog.show(getString(R.string.app_name), "현재 날씨 조회 실패")
+                }
+            }
+        )
+        viewModel.isSuccessForecast.observe(
+            viewLifecycleOwner, Observer { it->
+                if (it){
+                    viewModel.responseForecast.observe(
+                        viewLifecycleOwner, Observer {}
+                    )
+                } else {
+                    val customDialog = CustomDialog(requireContext())
+                    customDialog.show(getString(R.string.app_name), "날씨 예보 조회 실패")
                 }
             }
         )
@@ -187,7 +196,8 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
                         geocoderDefault.getFromLocation(latitude, longitude, 1)[0].locality
                     Logger.debug("DTE $cityName")
                     viewModel.cityName.value = cityNameDefault
-                    initWeatherInfoViewModel(cityName)
+                    viewModel.getWeatherInfoView(cityName,getString(R.string.weather_key))
+                    viewModel.getForecastInfoView(cityName,getString(R.string.weather_key))
                 }
             } catch (e: IOException) {
                 e.printStackTrace()

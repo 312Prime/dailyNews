@@ -2,26 +2,28 @@ package com.example.dailynews.data.remote.api
 
 import com.example.dailynews.model.ForecastModel
 import com.example.dailynews.model.WeatherModel
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 // 날씨 API Model
-interface WeatherAPIService {
+interface WeatherAPI {
 
     @GET("data/2.5/{path}")
-    fun doGetJsonDataWeather(
+    suspend fun getWeather(
         @Path("path") path: String,
         @Query("q") q: String,
+        @Query("lang") lang: String,
         @Query("appid") appid: String,
-    ): Call<WeatherModel>
+    ): Response<WeatherModel>
 
     @GET("data/2.5/{path}")
-    fun doGetJsonDataForecast(
+    suspend fun getForecast(
         @Path("path") path: String,
-        @Query("id") id: String,
+        @Query("q") q: String,
+        @Query("lang") lang: String,
         @Query("appid") appid: String,
-    ): Call<ForecastModel>
+    ): Response<ForecastModel>
 
 }

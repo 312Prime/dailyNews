@@ -11,6 +11,7 @@ abstract class BaseViewModel : ViewModel() {
     protected val job = SupervisorJob()
 
     protected val ioScope get() = CoroutineScope(job) + Dispatchers.IO
+    protected val retries: Long = 2
 
     override fun onCleared() {
         job.cancel()

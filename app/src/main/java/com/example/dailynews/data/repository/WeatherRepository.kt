@@ -1,28 +1,34 @@
 package com.example.dailynews.data.repository
 
-import com.example.dailynews.data.remote.RemoteDataSource
-import com.example.dailynews.data.remote.RemoteDataSourceImpl
+import com.example.dailynews.base.BaseRepository
+import com.example.dailynews.data.remote.RestfulManager
 import com.example.dailynews.model.ForecastModel
 import com.example.dailynews.model.WeatherModel
-import org.json.JSONObject
-import retrofit2.Response
+import com.example.dailynews.tools.logger.Logger
 
-class WeatherRepository {
-    private val retrofitRemoteDataSource: RemoteDataSource = RemoteDataSourceImpl()
+class WeatherRepository(
+    private val restfulManager: RestfulManager
+) : BaseRepository() {
 
-    fun getWeatherInfo(
-        jsonObject: JSONObject,
-        onResponse: (Response<WeatherModel>) -> Unit,
-        onFailure: (Throwable) -> Unit
-    ) {
-        retrofitRemoteDataSource.getWeatherInfo(jsonObject, onResponse, onFailure)
+    suspend fun getWeatherInfo(cityName: String, appid: String): WeatherModel {
+        return unWrap(
+            restfulManager.weatherApi.getWeather(
+                path = "weather",
+                q = cityName,
+                lang = "kr",
+                appid = appid,
+            )
+        )
     }
 
-    fun getForecastInfo(
-        jsonObject: JSONObject,
-        onResponse: (Response<ForecastModel>) -> Unit,
-        onFailure: (Throwable) -> Unit
-    ) {
-        retrofitRemoteDataSource.getForecastInfo(jsonObject, onResponse, onFailure)
+    suspend fun getForecastInfo(cityName: String, appid: String): ForecastModel {
+        return unWrap(
+            restfulManager.weatherApi.getForecast(
+                path = "forecast",
+                q = cityName,
+                lang = "kr",
+                appid = appid
+            )
+        )
     }
 }

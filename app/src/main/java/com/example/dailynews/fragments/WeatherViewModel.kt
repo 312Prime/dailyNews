@@ -6,6 +6,12 @@ import com.example.dailynews.data.repository.WeatherRepository
 import com.example.dailynews.model.ForecastModel
 import com.example.dailynews.model.WeatherModel
 import com.example.dailynews.tools.logger.Logger
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.retry
 import org.json.JSONObject
 
 class WeatherViewModel(
@@ -19,42 +25,28 @@ class WeatherViewModel(
 
     val cityName = MutableLiveData("Seoul")
 
-    fun getWeatherInfoView(jsonObject: JSONObject) {
-        Logger.debug("DTE getWeatherInfoView() - jsonObject : $jsonObject")
-
-        weatherRepository.getWeatherInfo(jsonObject = jsonObject,
-            onResponse = {
-                if (it.isSuccessful) {
-                    Logger.debug("DTE getWeatherInfoView() - Success : ${it.body()}")
-                    isSuccessWeather.value = true
-                    responseWeather.value = it.body()
-                }
-            },
-            onFailure = {
-                it.printStackTrace()
-                Logger.debug("DTE getWeatherInfoView() - Failure : ${it.message}")
-
-            }
-        )
-
+    fun getWeatherInfoView(cityName: String, appid: String) {
+        //  진행 중 작업 취소
+        job.cancelChildren()
+        // 서버 통신 : 날씨 API 불러오기
+        Logger.debug("DTE ${cityName}, ${appid}")
+        flow {
+            weatherRepository.getWeatherInfo(cityName = cityName, appid = appid).also { emit(it) }
+        }.onStart { }.onEach { data ->
+            isSuccessWeather.postValue(true)
+            responseWeather.postValue(data)
+        }.launchIn(ioScope)
     }
 
-    fun getForecastInfoView(jsonObject: JSONObject) {
-        Logger.debug("getForecastInfoView() - jsonObject : $jsonObject")
-
-        weatherRepository.getForecastInfo(jsonObject = jsonObject,
-            onResponse = {
-                if (it.isSuccessful) {
-                    isSuccessForecast.value = true
-                    Logger.debug("getForecastInfoView() - Success : ${it.body()}")
-                    responseForecast.value = it.body()
-                }
-            },
-            onFailure = {
-                it.printStackTrace()
-                Logger.debug("getForecastInfoView() - Failure : ${it.message}")
-            }
-        )
-
+    fun getForecastInfoView(cityName: String, appid: String) {
+        //  진행 중 작업 취소
+        job.cancelChildren()
+        // 서버 통신 : 날씨 API 불러오기
+        flow {
+            weatherRepository.getForecastInfo(cityName = cityName, appid = appid).also { emit(it) }
+        }.onStart { }.onEach { data ->
+            isSuccessForecast.postValue(true)
+            responseForecast.postValue(data)
+        }.launchIn(ioScope)
     }
 }

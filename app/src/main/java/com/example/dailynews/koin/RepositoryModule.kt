@@ -7,6 +7,7 @@ object RepositoryModule {
     val module = module {
         single {
             WeatherRepository(
+                restfulManager = get()
             )
         }
     }

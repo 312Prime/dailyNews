@@ -4,13 +4,16 @@ import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
+import com.example.dailynews.data.remote.api.WeatherAPI
 import com.example.dailynews.tools.logger.Logger
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-// Restful Main Class /추후 수정 필요
+// Restful Main Class
 class RestfulManager(val context: Context) {
 
     private val chuckerInterceptor = ChuckerInterceptor
@@ -29,12 +32,14 @@ class RestfulManager(val context: Context) {
     // 통신 메인 retroFit
     private val retrofit by lazy {
         Retrofit.Builder()
+            .baseUrl("http://api.openweathermap.org/")
             .client(
                 OkHttpClient
                     .Builder()
                     .addNetworkInterceptor {
                         it.proceed(
                             it.request()
+                                .also { Logger.debug("DTE CC $it") }
                                 .newBuilder()
                                 .build()
                         )
@@ -43,7 +48,12 @@ class RestfulManager(val context: Context) {
                     .readTimeout(30L, TimeUnit.SECONDS)
                     .writeTimeout(30L, TimeUnit.SECONDS)
                     .build()
+            ).addConverterFactory(
+                GsonConverterFactory.create(
+                    GsonBuilder().serializeNulls().create()
+                )
             )
+            .build()
     }
 
     // 통신시 log 남기기
@@ -56,4 +66,6 @@ class RestfulManager(val context: Context) {
         Logger.debug("[RESTFUL]Request Headers: $headers")
         Logger.debug("[RESTFUL]Request Body: $body")
     }
+
+    val weatherApi by lazy<WeatherAPI> { retrofit.create(WeatherAPI::class.java) }
 }

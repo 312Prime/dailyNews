@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class ForecastModel(
     @SerializedName("cod")
     var cod: String?,
-    @SerializedName("count")
+    @SerializedName("cnt")
     var count: Int?,
     @SerializedName("list")
     var list: List<ForecastListModel>?
