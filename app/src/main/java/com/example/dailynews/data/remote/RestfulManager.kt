@@ -4,6 +4,7 @@ import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
+import com.example.dailynews.data.remote.api.NewsAPI
 import com.example.dailynews.data.remote.api.WeatherAPI
 import com.example.dailynews.tools.logger.Logger
 import com.google.gson.GsonBuilder
@@ -14,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 // Restful Main Class
-class RestfulManager(val context: Context) {
+class RestfulManager(private val context: Context) {
 
     private val chuckerInterceptor = ChuckerInterceptor
         .Builder(context = context)
@@ -30,7 +31,7 @@ class RestfulManager(val context: Context) {
         .build()
 
     // 통신 메인 retroFit
-    private val retrofit by lazy {
+    private val weatherRetrofit by lazy {
         Retrofit.Builder()
             .baseUrl("http://api.openweathermap.org/")
             .client(
@@ -39,7 +40,31 @@ class RestfulManager(val context: Context) {
                     .addNetworkInterceptor {
                         it.proceed(
                             it.request()
-                                .also { Logger.debug("DTE CC $it") }
+                                .newBuilder()
+                                .build()
+                        )
+                    }
+                    .addNetworkInterceptor(chuckerInterceptor)
+                    .readTimeout(30L, TimeUnit.SECONDS)
+                    .writeTimeout(30L, TimeUnit.SECONDS)
+                    .build()
+            ).addConverterFactory(
+                GsonConverterFactory.create(
+                    GsonBuilder().serializeNulls().create()
+                )
+            )
+            .build()
+    }
+
+    private val newsRetrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://openapi.naver.com/v1/search/news.json")
+            .client(
+                OkHttpClient
+                    .Builder()
+                    .addNetworkInterceptor {
+                        it.proceed(
+                            it.request()
                                 .newBuilder()
                                 .build()
                         )
@@ -67,5 +92,6 @@ class RestfulManager(val context: Context) {
         Logger.debug("[RESTFUL]Request Body: $body")
     }
 
-    val weatherApi by lazy<WeatherAPI> { retrofit.create(WeatherAPI::class.java) }
+    val weatherApi by lazy<WeatherAPI> { this.weatherRetrofit.create(WeatherAPI::class.java) }
+    val newsApi by lazy<NewsAPI> { this.newsRetrofit.create(NewsAPI::class.java) }
 }

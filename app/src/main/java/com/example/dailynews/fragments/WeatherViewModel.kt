@@ -9,6 +9,7 @@ import com.example.dailynews.tools.logger.Logger
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
@@ -29,13 +30,13 @@ class WeatherViewModel(
         //  진행 중 작업 취소
         job.cancelChildren()
         // 서버 통신 : 날씨 API 불러오기
-        Logger.debug("DTE ${cityName}, ${appid}")
         flow {
             weatherRepository.getWeatherInfo(cityName = cityName, appid = appid).also { emit(it) }
         }.onStart { }.onEach { data ->
             isSuccessWeather.postValue(true)
             responseWeather.postValue(data)
         }.launchIn(ioScope)
+
     }
 
     fun getForecastInfoView(cityName: String, appid: String) {

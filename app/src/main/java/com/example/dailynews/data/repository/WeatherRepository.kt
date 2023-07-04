@@ -4,7 +4,6 @@ import com.example.dailynews.base.BaseRepository
 import com.example.dailynews.data.remote.RestfulManager
 import com.example.dailynews.model.ForecastModel
 import com.example.dailynews.model.WeatherModel
-import com.example.dailynews.tools.logger.Logger
 
 class WeatherRepository(
     private val restfulManager: RestfulManager

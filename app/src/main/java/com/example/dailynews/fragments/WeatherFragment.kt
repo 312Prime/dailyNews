@@ -9,29 +9,24 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
 import com.example.dailynews.R
 import com.example.dailynews.adapter.WeatherAdapter
 import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentWeatherBinding
 import com.example.dailynews.model.WeatherModel
 import com.example.dailynews.tools.customDialog.CustomDialog
-import com.example.dailynews.tools.logger.Logger
-import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.util.Locale
-import kotlin.math.pow
-import kotlin.math.roundToInt
 
 // 날씨 Fragment
 class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
@@ -43,7 +38,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
 
     private val viewModel by viewModel<WeatherViewModel>()
 
-    private val weatherAdapter by lazy { WeatherAdapter() }
+    private val weatherAdapter by lazy { WeatherAdapter(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,7 +58,6 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
         super.onViewCreated(view, savedInstanceState)
         setBinding()
         getCityName()
-        observeData()
         setObserver()
     }
 
@@ -103,35 +97,34 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
 
     private fun setBinding() {
         with(binding) {
-            with(weatherRecyclerView){
-//                adapter = weatherAdapter.also { it.initList(viewModel.) }
-//                layoutManager = GridLayoutManager(requireContext(),3)
+            with(weatherRecyclerView) {
+                adapter = weatherAdapter.also { it.initList(mutableListOf()) }
+                layoutManager = GridLayoutManager(requireContext(), 3)
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
     private fun setObserver() {
-        viewModel.cityName.observe(viewLifecycleOwner) {
-            binding.weatherCityName.text = it
-        }
-        viewModel.responseWeather.observe(viewLifecycleOwner) {
-            binding.weatherTemperatureState.text =
-                if (it.main.temp == null) "미확인" else "%.1f 'c".format(it.main.temp!! - 273.15)
-            binding.weatherCloudShapeState.text = it.weather[0].description
-            binding.weatherWindState.text = it.wind.speed.toString() + " m/s"
-            binding.weatherCloudState.text = it.clouds.all.toString() + " %"
-            binding.weatherHumidity.text = it.main.humidity.toString() + " %"
-        }
-    }
-
-    private fun observeData() {
+        viewModel.cityName.observe(
+            viewLifecycleOwner, Observer { cityName ->
+                binding.weatherCityName.text = cityName
+                viewModel.getWeatherInfoView(cityName, getString(R.string.weather_key))
+            }
+        )
         viewModel.isSuccessWeather.observe(
             viewLifecycleOwner, Observer { it ->
                 if (it) {
                     viewModel.responseWeather.observe(
                         viewLifecycleOwner, Observer {
+                            viewModel.getForecastInfoView(viewModel.cityName.value!!, getString(R.string.weather_key))
                             setWeatherData(it)
+                            binding.weatherTemperatureState.text =
+                                if (it.main.temp == null) "미확인" else "%.1f 'c".format(it.main.temp!! - 273.15)
+                            binding.weatherCloudShapeState.text = it.weather[0].description
+                            binding.weatherWindState.text = it.wind.speed.toString() + " m/s"
+                            binding.weatherCloudState.text = it.clouds.all.toString() + " %"
+                            binding.weatherHumidity.text = it.main.humidity.toString() + " %"
                         }
                     )
                 } else {
@@ -141,10 +134,12 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
             }
         )
         viewModel.isSuccessForecast.observe(
-            viewLifecycleOwner, Observer { it->
-                if (it){
+            viewLifecycleOwner, Observer { it ->
+                if (it) {
                     viewModel.responseForecast.observe(
-                        viewLifecycleOwner, Observer {}
+                        viewLifecycleOwner, Observer { model ->
+                            if (model.list != null) weatherAdapter.initList(model.list!!)
+                        }
                     )
                 } else {
                     val customDialog = CustomDialog(requireContext())
@@ -168,17 +163,19 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun setWeatherData(model: WeatherModel) {
-//        Glide.with(this).load(
-//            resources.getDrawable(
-//                resources.getIdentifier(
-//                    "icon_" + model.weather[0].icon,
-//                    "drawable",
-//
-//                )
-//            )
-//        ).placeholder(R.drawable.ic_launcher)
-//            .error(R.drawable.ic_launcher)
+        Glide.with(this).load(
+            resources.getDrawable(
+                resources.getIdentifier(
+                    "icon_" + model.weather[0].icon,
+                    "drawable",
+                    requireActivity().packageName
+                )
+            )
+        ).placeholder(R.drawable.ic_launcher)
+            .error(R.drawable.ic_launcher)
+            .into(binding.weatherIcon)
     }
 
     private val locationListener: LocationListener = object : LocationListener {
@@ -194,10 +191,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
                     val cityName = addresses[0].locality
                     val cityNameDefault =
                         geocoderDefault.getFromLocation(latitude, longitude, 1)[0].locality
-                    Logger.debug("DTE $cityName")
                     viewModel.cityName.value = cityNameDefault
-                    viewModel.getWeatherInfoView(cityName,getString(R.string.weather_key))
-                    viewModel.getForecastInfoView(cityName,getString(R.string.weather_key))
                 }
             } catch (e: IOException) {
                 e.printStackTrace()

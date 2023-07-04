@@ -88,10 +88,11 @@
                 app:layout_constraintTop_toBottomOf="@+id/ll_name">
 
                 <ImageView
-                    android:id="@+id/iv_weather"
+                    android:id="@+id/weatherIcon"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="30" />
+                    android:layout_weight="30"
+                    android:src="@drawable/ic_launcher"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
@@ -332,7 +333,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/weatherRecyclerTitle" />
+                app:layout_constraintTop_toBottomOf="@+id/weatherRecyclerTitle"
+                tools:listitem="@layout/item_weather_list"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
