@@ -25,6 +25,7 @@ object ViewModelModule {
         }
         viewModel {
             NewsViewModel(
+                newsRepository = get()
             )
         }
         viewModel {

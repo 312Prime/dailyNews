@@ -36,7 +36,6 @@ class WeatherViewModel(
             isSuccessWeather.postValue(true)
             responseWeather.postValue(data)
         }.launchIn(ioScope)
-
     }
 
     fun getForecastInfoView(cityName: String, appid: String) {

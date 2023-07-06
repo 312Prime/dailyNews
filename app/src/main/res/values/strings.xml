@@ -5,8 +5,14 @@
     <string name="bottom_navigation_third">알람</string>
     <string name="bottom_navigation_forth">할일</string>
     <string name="intro_title">DAILY NEWS\n오늘의 뉴스</string>
+
+    <!--    날씨      -->
     <string name="weather_url">http://api.openweathermap.org/</string>
     <string name="weather_key">fb3803403b871b34a30c7c61743e57e8</string>
     <string name="weather_title">오늘의 날씨</string>
     <string name="weather_country">대한민국</string>
+
+    <!--    뉴스      -->
+    <string name="news_title">오늘의 뉴스</string>
+    <string name="news_close_button">닫기</string>
 </resources>

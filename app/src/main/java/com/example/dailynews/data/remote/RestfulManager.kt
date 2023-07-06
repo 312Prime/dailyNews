@@ -58,7 +58,7 @@ class RestfulManager(private val context: Context) {
 
     private val newsRetrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://openapi.naver.com/v1/search/news.json")
+            .baseUrl("https://openapi.naver.com/")
             .client(
                 OkHttpClient
                     .Builder()

@@ -24,6 +24,7 @@ import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentWeatherBinding
 import com.example.dailynews.model.WeatherModel
 import com.example.dailynews.tools.customDialog.CustomDialog
+import com.example.dailynews.tools.logger.Logger
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.util.Locale
@@ -106,10 +107,14 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
 
     @SuppressLint("SetTextI18n")
     private fun setObserver() {
+        var currentCityName = ""
         viewModel.cityName.observe(
             viewLifecycleOwner, Observer { cityName ->
                 binding.weatherCityName.text = cityName
-                viewModel.getWeatherInfoView(cityName, getString(R.string.weather_key))
+                if (viewModel.cityName.value != currentCityName) {
+                    currentCityName = viewModel.cityName.value!!
+                    viewModel.getWeatherInfoView(cityName, getString(R.string.weather_key))
+                }
             }
         )
         viewModel.isSuccessWeather.observe(
@@ -117,7 +122,10 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
                 if (it) {
                     viewModel.responseWeather.observe(
                         viewLifecycleOwner, Observer {
-                            viewModel.getForecastInfoView(viewModel.cityName.value!!, getString(R.string.weather_key))
+                            viewModel.getForecastInfoView(
+                                viewModel.cityName.value!!,
+                                getString(R.string.weather_key)
+                            )
                             setWeatherData(it)
                             binding.weatherTemperatureState.text =
                                 if (it.main.temp == null) "미확인" else "%.1f 'c".format(it.main.temp!! - 273.15)

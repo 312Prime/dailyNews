@@ -53,7 +53,6 @@ class WeatherAdapter(val context: Context) : RecyclerView.Adapter<WeatherAdapter
         @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
         fun bindViewHolder(data: ForecastListModel) {
             with(binding) {
-                Logger.debug("DTE ${data.weather}")
                 weatherRecyclerDate.text = data.dt_txt.substring(5, 10) +" " + data.dt_txt.substring(11,13) + "시"
                 weatherDetailState.text = data.weather?.get(0)?.description
                 weatherDetailTemp.text =
