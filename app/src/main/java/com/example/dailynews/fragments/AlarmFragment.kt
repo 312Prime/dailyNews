@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import com.example.dailynews.R
 import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentAlarmBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
 
     private var _binding: FragmentAlarmBinding? = null
+
+    private val viewModel by viewModel<AlarmViewModel>()
     private val binding get() = _binding!!
 
     override fun onCreateView(
