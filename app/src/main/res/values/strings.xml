@@ -16,4 +16,6 @@
     <string name="news_title">오늘의 뉴스</string>
     <string name="news_close_button">닫기</string>
     <string name="alarm_title">알람</string>
+    <string name="popup_cancel">취소</string>
+    <string name="popup_confirm">확인</string>
 </resources>

@@ -51,12 +51,46 @@
         android:layout_height="match_parent">
 
         <TimePicker
+            android:id="@+id/alarmTimePicker"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintDimensionRatio="2:1"
-            android:background="@color/white"
+            android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
-            android:timePickerMode="spinner"/>
+            android:background="@color/white"
+            android:timePickerMode="spinner"
+            app:layout_constraintDimensionRatio="2:1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="60dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/alarmTimePicker">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/alarmCancelButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="30dp"
+                android:layout_weight="1"
+                android:background="@color/grey_400"
+                android:text="@string/popup_cancel"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/alarmConfirmButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="30dp"
+                android:layout_weight="1"
+                android:background="@color/dark_purple_300"
+                android:text="@string/popup_confirm"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
