@@ -10,15 +10,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailynews.R
+import com.example.dailynews.adapter.AlarmAdapter
 import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentAlarmBinding
+import com.example.dailynews.model.AlarmItemsModel
 import com.example.dailynews.tools.receiver.AlarmReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.Calendar
 import java.util.Date
 
@@ -27,6 +32,8 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
     private var _binding: FragmentAlarmBinding? = null
 
     private val viewModel by viewModel<AlarmViewModel>()
+
+    private val alarmAdapter by lazy { AlarmAdapter(requireContext()) }
     private val binding get() = _binding!!
 
     private lateinit var pendingIntent: PendingIntent
@@ -56,7 +63,28 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
     }
 
     private fun setBinding() {
-        with(binding) {}
+        with(binding) {
+            with(alarmRecyclerView) {
+                adapter = alarmAdapter.also { it.initList(mutableListOf()) }
+                layoutManager = LinearLayoutManager(requireContext())
+            }
+
+            with(alarmConfirmButton) {
+                setOnClickListener {
+                    val setTime = "2000-00-00 ${alarmTimePicker.hour}:${alarmTimePicker.minute}:00"
+                    val currentTime = (
+                            LocalDate.now().toString().replace("-", "").substring(3) + LocalTime.now().toString()
+                                .substring(0, 6).replace(":", "")).toInt()
+                    val newAlarm = AlarmItemsModel(
+                        time = setTime,
+                        content = alarmEditText.text.toString(),
+                        alarmCode = currentTime
+                    )
+                    callAlarm(setTime, currentTime, alarmEditText.text.toString())
+                    viewModel.saveAlarmList(newAlarm)
+                }
+            }
+        }
     }
 
     @SuppressLint("SimpleDateFormat")

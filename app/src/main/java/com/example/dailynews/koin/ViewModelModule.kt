@@ -21,6 +21,7 @@ object ViewModelModule {
         }
         viewModel {
             AlarmViewModel(
+                alarmRepository = get()
             )
         }
         viewModel {

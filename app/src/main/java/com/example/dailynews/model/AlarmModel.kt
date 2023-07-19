@@ -14,6 +14,8 @@ data class AlarmModel(
 data class AlarmItemsModel(
     @SerializedName("time")
     var time: String,
-    @SerializedName("type")
-    var type: String
+    @SerializedName("content")
+    var content: String,
+    @SerializedName("alarmCode")
+    var alarmCode: Int
 ) : Parcelable
