@@ -23,4 +23,12 @@ class SharedPreferenceManager(applicationContext: Context) {
                 this.putString(PreferenceKeys.ALARM_KEY.keyName, value)
             }
         }
+
+    fun clearAll(){
+        store.edit(commit = true){
+            PreferenceKeys.values().forEach {
+                this.remove(it.keyName)
+            }
+        }
+    }
 }

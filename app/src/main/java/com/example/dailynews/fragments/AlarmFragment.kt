@@ -73,10 +73,13 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
                 setOnClickListener {
                     val setTime = "2000-00-00 ${alarmTimePicker.hour}:${alarmTimePicker.minute}:00"
                     val currentTime = (
-                            LocalDate.now().toString().replace("-", "").substring(3) + LocalTime.now().toString()
+                            LocalDate.now().toString().replace("-", "")
+                                .substring(3) + LocalTime.now().toString()
                                 .substring(0, 6).replace(":", "")).toInt()
                     val newAlarm = AlarmItemsModel(
-                        time = setTime,
+                        time = "${alarmTimePicker.hour}" +
+                                (if (alarmTimePicker.minute < 10) "0" else "") +
+                                "${alarmTimePicker.minute}",
                         content = alarmEditText.text.toString(),
                         alarmCode = currentTime
                     )
