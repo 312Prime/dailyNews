@@ -8,6 +8,7 @@ class AlarmViewModel(
     private val alarmRepository: AlarmRepository
 ) : BaseViewModel() {
 
+    // 알람 리스트 저장
     fun saveAlarmList(alarmItemsModel: AlarmItemsModel) {
         alarmRepository.storeAlarmList(alarmItemsModel)
     }

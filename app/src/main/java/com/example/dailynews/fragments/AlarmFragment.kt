@@ -90,6 +90,7 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
         }
     }
 
+    // 알람 저장
     @SuppressLint("SimpleDateFormat")
     fun callAlarm(time: String, alarmCode: Int, content: String) {
 
@@ -135,6 +136,7 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
         )
     }
 
+    // 알람 취소
     fun cancelAlarm(alarmCode: Int) {
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)

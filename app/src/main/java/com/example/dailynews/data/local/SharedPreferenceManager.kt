@@ -16,6 +16,7 @@ class SharedPreferenceManager(applicationContext: Context) {
     private val store =
         applicationContext.getSharedPreferences(PREFERENCE_KEY, Context.MODE_PRIVATE)
 
+    // 저장된 알람 리스트
     var alarmList: String
         get() = store.getString(PreferenceKeys.ALARM_KEY.keyName, null) ?: ""
         set(value) {
@@ -24,6 +25,7 @@ class SharedPreferenceManager(applicationContext: Context) {
             }
         }
 
+    // value 모두 삭제
     fun clearAll(){
         store.edit(commit = true){
             PreferenceKeys.values().forEach {

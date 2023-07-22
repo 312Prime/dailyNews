@@ -9,6 +9,7 @@ class NewsRepository(
     private val restfulManager: RestfulManager
 ) : BaseRepository() {
 
+    // 뉴스 정보 가져오기
     suspend fun getNewsInfo(query: String): NewsListModel {
         return unWrap(
             restfulManager.newsApi.getNews(
