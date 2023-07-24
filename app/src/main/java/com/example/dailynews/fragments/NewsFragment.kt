@@ -44,6 +44,11 @@ class NewsFragment : BaseFragment(R.layout.fragment_news) {
         viewModel.getNews("all")
     }
 
+    override fun onResume() {
+        super.onResume()
+        closeWebView()
+    }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()

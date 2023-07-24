@@ -9,7 +9,19 @@ class AlarmViewModel(
 ) : BaseViewModel() {
 
     // 알람 리스트 저장
-    fun saveAlarmList(alarmItemsModel: AlarmItemsModel) {
-        alarmRepository.storeAlarmList(alarmItemsModel)
+    fun saveAlarmList(alarmItemsModel: AlarmItemsModel): List<AlarmItemsModel> {
+        return alarmRepository.storeAlarmList(alarmItemsModel)
+    }
+
+    fun initAlarmList(): List<AlarmItemsModel> {
+        return alarmRepository.initAlarm()
+    }
+
+    fun deleteAlarmList(alarmCode: Int): List<AlarmItemsModel>{
+        return alarmRepository.deleteAlarmList(alarmCode)
+    }
+
+    fun deleteAllAlarm(){
+        alarmRepository.deleteAllAlarm()
     }
 }

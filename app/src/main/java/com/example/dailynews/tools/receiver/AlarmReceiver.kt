@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Vibrator
 import androidx.core.app.NotificationCompat
 import com.example.dailynews.R
 import com.example.dailynews.tools.service.AlarmService
@@ -36,7 +37,9 @@ class AlarmReceiver() : BroadcastReceiver() {
 
         val intent2 = Intent(context, AlarmService::class.java)
         val requestCode = intent?.extras!!.getInt("alarm_rqCode")
-        val title = intent.extras!!.getString("content")
+        val title = if (intent.extras!!.getString("content") != "")
+            intent.extras!!.getString("content")
+        else "설정된 알림 시간 입니다."
 
         //Activity를 시작하는 인텐트 생성
         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -50,8 +53,8 @@ class AlarmReceiver() : BroadcastReceiver() {
             )
         }
 
-        val notification = builder.setContentTitle(title)
-            .setContentText("SCHEDULE MANAGER")
+        val notification = builder.setContentTitle("DailyNews")
+            .setContentText("$title")
             .setSmallIcon(R.drawable.ic_launcher_round)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)

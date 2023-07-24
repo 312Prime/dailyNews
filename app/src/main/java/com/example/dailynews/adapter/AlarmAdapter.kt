@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailynews.databinding.ItemAlarmListBinding
+import com.example.dailynews.fragments.AlarmFragment
 import com.example.dailynews.model.AlarmItemsModel
 import com.example.dailynews.model.AlarmModel
+import com.example.dailynews.tools.logger.Logger
 
-class AlarmAdapter(val context: Context) : RecyclerView.Adapter<AlarmAdapter.ListViewHolder>() {
+class AlarmAdapter(val context: Context, val alarmFragment: AlarmFragment) :
+    RecyclerView.Adapter<AlarmAdapter.ListViewHolder>() {
 
     private var newItems = mutableListOf<AlarmItemsModel>()
 
@@ -37,8 +40,8 @@ class AlarmAdapter(val context: Context) : RecyclerView.Adapter<AlarmAdapter.Lis
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun initList(newList: List<AlarmItemsModel>){
-        with(newItems){
+    fun initList(newList: List<AlarmItemsModel>) {
+        with(newItems) {
             clear()
             addAll(newList)
         }
@@ -48,9 +51,15 @@ class AlarmAdapter(val context: Context) : RecyclerView.Adapter<AlarmAdapter.Lis
     inner class ListViewHolder(private val binding: ItemAlarmListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
         fun bindViewHolder(data: AlarmItemsModel) {
             with(binding) {
-
+                alarmListTitle.text = if (data.content == "") "설정된 알람" else data.content
+                alarmListTime.text = data.time.substring(0, 2) + " : " + data.time.substring(2, 4)
+                alarmListDeleteButton.setOnClickListener {
+                    alarmFragment.cancelAlarm(data.alarmCode)
+                    notifyDataSetChanged()
+                }
             }
         }
     }

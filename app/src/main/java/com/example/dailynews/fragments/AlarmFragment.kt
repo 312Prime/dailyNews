@@ -5,6 +5,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.icu.util.LocaleData
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.example.dailynews.adapter.AlarmAdapter
 import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentAlarmBinding
 import com.example.dailynews.model.AlarmItemsModel
+import com.example.dailynews.tools.logger.Logger
 import com.example.dailynews.tools.receiver.AlarmReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,11 +35,10 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
 
     private val viewModel by viewModel<AlarmViewModel>()
 
-    private val alarmAdapter by lazy { AlarmAdapter(requireContext()) }
+    private val alarmAdapter by lazy { AlarmAdapter(requireContext(), this) }
     private val binding get() = _binding!!
 
     private lateinit var pendingIntent: PendingIntent
-    private val ioScope by lazy { CoroutineScope(Dispatchers.IO) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +55,9 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.deleteAllAlarm()
         setBinding()
+        alarmAdapter.initList(viewModel.initAlarmList())
     }
 
     override fun onDestroyView() {
@@ -69,22 +72,35 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
                 layoutManager = LinearLayoutManager(requireContext())
             }
 
+            with(alarmAddButton) {
+                setOnClickListener {
+                    alarmAddLayout.visibility = View.VISIBLE
+                }
+            }
+
+            with(alarmCancelButton) {
+                setOnClickListener {
+                    alarmAddLayout.visibility = View.GONE
+                    alarmEditText.setText("")
+                }
+            }
+
             with(alarmConfirmButton) {
                 setOnClickListener {
                     val setTime = "2000-00-00 ${alarmTimePicker.hour}:${alarmTimePicker.minute}:00"
                     val currentTime = (
-                            LocalDate.now().toString().replace("-", "")
-                                .substring(3) + LocalTime.now().toString()
-                                .substring(0, 6).replace(":", "")).toInt()
+                            LocalTime.now().toString().replace(":", "")
+                                .replace(".","").substring(1, 10)).toInt()
                     val newAlarm = AlarmItemsModel(
-                        time = "${alarmTimePicker.hour}" +
-                                (if (alarmTimePicker.minute < 10) "0" else "") +
-                                "${alarmTimePicker.minute}",
+                        time = (if (alarmTimePicker.hour < 10) "0" else "") + "${alarmTimePicker.hour}"
+                                + (if (alarmTimePicker.minute < 10) "0" else "") + "${alarmTimePicker.minute}",
                         content = alarmEditText.text.toString(),
                         alarmCode = currentTime
                     )
+                    alarmAddLayout.visibility = View.GONE
                     callAlarm(setTime, currentTime, alarmEditText.text.toString())
-                    viewModel.saveAlarmList(newAlarm)
+                    alarmAdapter.initList(viewModel.saveAlarmList(newAlarm))
+                    alarmEditText.setText("")
                 }
             }
         }
@@ -93,7 +109,6 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
     // 알람 저장
     @SuppressLint("SimpleDateFormat")
     fun callAlarm(time: String, alarmCode: Int, content: String) {
-
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val receiverIntent = Intent(context, AlarmReceiver::class.java)
 
@@ -153,5 +168,6 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
         }
 
         alarmManager.cancel(pendingIntent)
+        alarmAdapter.initList(viewModel.deleteAlarmList(alarmCode))
     }
 }

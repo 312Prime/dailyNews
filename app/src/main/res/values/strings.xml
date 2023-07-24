@@ -20,4 +20,5 @@
     <string name="popup_confirm">확인</string>
     <string name="alarm_add">알람 추가하기</string>
     <string name="alarm_memo_hint">메모를 입력해주세요</string>
+    <string name="alarm_list_delete">지우기</string>
 </resources>

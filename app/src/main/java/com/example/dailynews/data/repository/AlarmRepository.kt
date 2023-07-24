@@ -13,7 +13,7 @@ class AlarmRepository(
 
     fun storeAlarmList(alarmItemsModel: AlarmItemsModel): List<AlarmItemsModel> {
         // 원래 있던 알람 리스트
-        val oldList = if (sharedPreferenceManager.alarmList == "") JSONArray()
+        var oldList = if (sharedPreferenceManager.alarmList == "") JSONArray()
         else JSONArray(sharedPreferenceManager.alarmList)
         // 새로운 알람 리스트
         val newList = JsonArray()
@@ -28,6 +28,7 @@ class AlarmRepository(
         // 저장소에 새로운 알람 리스트 덮어쓰기
         sharedPreferenceManager.alarmList = newList.toString()
         // 새로운 알람 모델에 기존 알람을 모델로 변환해 추가
+        oldList = JSONArray(sharedPreferenceManager.alarmList)
         for (i in 0 until oldList.length()) {
             newModel.add(
                 AlarmItemsModel(
@@ -41,7 +42,45 @@ class AlarmRepository(
         return newModel
     }
 
-    fun deleteAlarmList(alarmItemsModel: AlarmItemsModel) {
-        val newList = sharedPreferenceManager.alarmList
+    fun initAlarm(): List<AlarmItemsModel> {
+        val alarmList = if (sharedPreferenceManager.alarmList == "") JSONArray()
+        else JSONArray(sharedPreferenceManager.alarmList)
+        val alarmModel = mutableListOf<AlarmItemsModel>()
+        for (i in 0 until alarmList.length()) {
+            alarmModel.add(
+                AlarmItemsModel(
+                    time = alarmList.optString(i).substring(0, 4),
+                    alarmCode = alarmList.optString(i).substring(4, 13).toInt(),
+                    content = if (alarmList.optString(i).length > 13) alarmList.optString(i)
+                        .substring(13) else "",
+                )
+            )
+        }
+        return alarmModel
+    }
+
+    fun deleteAlarmList(alarmCode: Int): List<AlarmItemsModel> {
+        val oldList = JSONArray(sharedPreferenceManager.alarmList)
+        val newList = JsonArray()
+        val newModel = mutableListOf<AlarmItemsModel>()
+        for (i in 0 until oldList.length()) {
+            if (alarmCode != oldList.optString(i).substring(4, 13).toInt()) {
+                newList.add(oldList.optString(i))
+                newModel.add(
+                    AlarmItemsModel(
+                        time = oldList.optString(i).substring(0, 4),
+                        alarmCode = oldList.optString(i).substring(4, 13).toInt(),
+                        content = if (oldList.optString(i).length > 13) oldList.optString(i)
+                            .substring(13) else "",
+                    )
+                )
+            }
+        }
+        sharedPreferenceManager.alarmList = newList.toString()
+        return newModel
+    }
+
+    fun deleteAllAlarm(){
+        sharedPreferenceManager.clearAll()
     }
 }
