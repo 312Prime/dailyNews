@@ -57,7 +57,11 @@ class AlarmAdapter(val context: Context, val alarmFragment: AlarmFragment) :
                 alarmListTitle.text = if (data.content == "") "설정된 알람" else data.content
                 alarmListTime.text = data.time.substring(0, 2) + " : " + data.time.substring(2, 4)
                 alarmListDeleteButton.setOnClickListener {
-                    alarmFragment.cancelAlarm(data.alarmCode)
+                    alarmFragment.showCancelAlarmDialog(
+                        content = data.content,
+                        alarmTime = data.time.substring(0, 2) + " : " + data.time.substring(2, 4),
+                        alarmCode = data.alarmCode
+                    )
                     notifyDataSetChanged()
                 }
             }

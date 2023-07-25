@@ -2,10 +2,10 @@ package com.example.dailynews.fragments
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
+import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.icu.util.LocaleData
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,8 +19,6 @@ import com.example.dailynews.databinding.FragmentAlarmBinding
 import com.example.dailynews.model.AlarmItemsModel
 import com.example.dailynews.tools.logger.Logger
 import com.example.dailynews.tools.receiver.AlarmReceiver
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -55,7 +53,6 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.deleteAllAlarm()
         setBinding()
         alarmAdapter.initList(viewModel.initAlarmList())
     }
@@ -74,33 +71,34 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
 
             with(alarmAddButton) {
                 setOnClickListener {
-                    alarmAddLayout.visibility = View.VISIBLE
+                    resetAlarmLayout()
                 }
             }
 
             with(alarmCancelButton) {
                 setOnClickListener {
-                    alarmAddLayout.visibility = View.GONE
-                    alarmEditText.setText("")
+                    resetAlarmLayout(false)
+                    resetTime()
                 }
             }
 
             with(alarmConfirmButton) {
                 setOnClickListener {
-                    val setTime = "2000-00-00 ${alarmTimePicker.hour}:${alarmTimePicker.minute}:00"
+                    val setTime =
+                        "${LocalDate.now()} ${alarmTimePicker.hour}:${alarmTimePicker.minute}:00"
                     val currentTime = (
                             LocalTime.now().toString().replace(":", "")
-                                .replace(".","").substring(1, 10)).toInt()
+                                .replace(".", "").substring(0, 9)).toInt()
                     val newAlarm = AlarmItemsModel(
                         time = (if (alarmTimePicker.hour < 10) "0" else "") + "${alarmTimePicker.hour}"
                                 + (if (alarmTimePicker.minute < 10) "0" else "") + "${alarmTimePicker.minute}",
                         content = alarmEditText.text.toString(),
                         alarmCode = currentTime
                     )
-                    alarmAddLayout.visibility = View.GONE
                     callAlarm(setTime, currentTime, alarmEditText.text.toString())
                     alarmAdapter.initList(viewModel.saveAlarmList(newAlarm))
-                    alarmEditText.setText("")
+                    resetTime()
+                    resetAlarmLayout(false)
                 }
             }
         }
@@ -137,6 +135,7 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
         var dateTime = Date()
         try {
             dateTime = dateFormat.parse(time) as Date
+            Logger.debug("DTE 2 $dateTime")
         } catch (e: ParseException) {
             e.printStackTrace()
         }
@@ -144,11 +143,32 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
         val calendar = Calendar.getInstance()
         calendar.time = dateTime
 
-        alarmManager.setExactAndAllowWhileIdle(
+        alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis.also {
+                Logger.debug("DTE $it")
+            },
+            pendingIntent
+        )
+    }
+
+    fun showCancelAlarmDialog(content: String, alarmTime: String, alarmCode: Int) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("알람을 삭제하시겠습니까?")
+            .setMessage("$alarmTime \n$content")
+            .setPositiveButton("삭제") { _, _ ->
+                cancelAlarm(alarmCode)
+            }
+            .setNegativeButton("취소") { _, _ ->
+            }
+        builder.show()
     }
 
     // 알람 취소
@@ -169,5 +189,16 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
 
         alarmManager.cancel(pendingIntent)
         alarmAdapter.initList(viewModel.deleteAlarmList(alarmCode))
+    }
+
+    private fun resetAlarmLayout(visibility: Boolean? = true) {
+        binding.alarmEditText.setText("")
+        binding.alarmAddLayout.visibility =
+            if (visibility == true) View.VISIBLE else View.GONE
+    }
+
+    private fun resetTime() {
+        binding.alarmTimePicker.hour = LocalTime.now().hour
+        binding.alarmTimePicker.minute = LocalTime.now().minute
     }
 }
