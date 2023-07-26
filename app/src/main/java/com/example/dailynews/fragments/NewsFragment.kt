@@ -46,6 +46,7 @@ class NewsFragment : BaseFragment(R.layout.fragment_news) {
 
     override fun onResume() {
         super.onResume()
+        // 외부 인터넷 앱을 통하는 경우 웹뷰가 열려있는 현상 때문에 설정
         closeWebView()
     }
 
@@ -56,10 +57,6 @@ class NewsFragment : BaseFragment(R.layout.fragment_news) {
 
     private fun setBinding() {
         with(binding) {
-            with(newsWebViewLayout) {
-                visibility = View.GONE
-            }
-
             with(newsRecyclerView) {
                 adapter = newsAdapter.also { it.initList(mutableListOf()) }
                 layoutManager = LinearLayoutManager(requireContext())
@@ -81,11 +78,14 @@ class NewsFragment : BaseFragment(R.layout.fragment_news) {
         )
     }
 
+    // 웹뷰 열기
     fun openWebView(url: String) {
         binding.newsWebViewLayout.visibility = View.VISIBLE
         binding.newsWebView.webViewClient
         binding.newsWebView.loadUrl(url)
     }
+
+    // 웹뷰 닫기
     private fun closeWebView(){
         binding.newsWebViewLayout.visibility = View.GONE
     }

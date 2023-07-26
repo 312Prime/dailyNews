@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat
 import com.example.dailynews.R
 import com.example.dailynews.tools.service.AlarmService
 
-class AlarmReceiver() : BroadcastReceiver() {
+class AlarmReceiver : BroadcastReceiver() {
 
     private lateinit var manager: NotificationManager
     private lateinit var builder: NotificationCompat.Builder
@@ -41,7 +41,7 @@ class AlarmReceiver() : BroadcastReceiver() {
             intent.extras!!.getString("content")
         else "설정된 알림 시간 입니다."
 
-        //Activity를 시작하는 인텐트 생성
+        // Activity 시작 Intent 생성
         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.getActivity(context, requestCode, intent2, PendingIntent.FLAG_IMMUTABLE)
         } else {
@@ -53,6 +53,7 @@ class AlarmReceiver() : BroadcastReceiver() {
             )
         }
 
+        // 알람을 매일 설정된 시간마다 울리게 set
         val notification = builder.setContentTitle("DailyNews")
             .setContentText("$title")
             .setSmallIcon(R.drawable.ic_launcher_round)

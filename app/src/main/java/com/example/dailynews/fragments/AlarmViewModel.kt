@@ -13,14 +13,17 @@ class AlarmViewModel(
         return alarmRepository.storeAlarmList(alarmItemsModel)
     }
 
+    // 알람 리스트 초기화
     fun initAlarmList(): List<AlarmItemsModel> {
         return alarmRepository.initAlarm()
     }
 
+    // 알람 삭제
     fun deleteAlarmList(alarmCode: Int): List<AlarmItemsModel>{
         return alarmRepository.deleteAlarmList(alarmCode)
     }
 
+    // 모든 알람 삭제
     fun deleteAllAlarm(){
         alarmRepository.deleteAllAlarm()
     }

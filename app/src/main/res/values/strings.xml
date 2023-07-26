@@ -1,4 +1,5 @@
 <resources>
+    <!--    전체      -->
     <string name="app_name">데일리 뉴스</string>
     <string name="bottom_navigation_first">날씨</string>
     <string name="bottom_navigation_second">뉴스</string>
@@ -16,9 +17,17 @@
     <string name="news_title">오늘의 뉴스</string>
     <string name="news_close_button">닫기</string>
     <string name="alarm_title">알람</string>
-    <string name="popup_cancel">취소</string>
-    <string name="popup_confirm">확인</string>
+
+    <!--    알람     -->
     <string name="alarm_add">알람 추가하기</string>
     <string name="alarm_memo_hint">메모를 입력해주세요</string>
     <string name="alarm_list_delete">지우기</string>
+
+    <!--    할일     -->
+
+    <!--    팝업     -->
+    <string name="popup_cancel">취소</string>
+    <string name="popup_confirm">확인</string>
+    <string name="todo_title">할 일</string>
+
 </resources>

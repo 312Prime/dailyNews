@@ -113,6 +113,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
                 binding.weatherCityName.text = cityName
                 if (viewModel.cityName.value != currentCityName) {
                     currentCityName = viewModel.cityName.value!!
+                    // 날씨 정보 호출
                     viewModel.getWeatherInfoView(cityName, getString(R.string.weather_key))
                 }
             }
@@ -122,6 +123,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
                 if (it) {
                     viewModel.responseWeather.observe(
                         viewLifecycleOwner, Observer {
+                            // 날씨 예보 호출
                             viewModel.getForecastInfoView(
                                 viewModel.cityName.value!!,
                                 getString(R.string.weather_key)
@@ -157,6 +159,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
         )
     }
 
+    // 도시 이름 가져오기
     @SuppressLint("MissingPermission")
     private fun getCityName() {
         if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
@@ -171,6 +174,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
         }
     }
 
+    // 날씨 아이콘 가져오기
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun setWeatherData(model: WeatherModel) {
         Glide.with(this).load(
@@ -186,6 +190,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
             .into(binding.weatherIcon)
     }
 
+    // 위도 경도로 도시 이름 확인
     private val locationListener: LocationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
             val latitude = location.latitude
@@ -196,7 +201,6 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
             try {
                 val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1)
                 if (addresses.isNotEmpty()) {
-                    val cityName = addresses[0].locality
                     val cityNameDefault =
                         geocoderDefault.getFromLocation(latitude, longitude, 1)[0].locality
                     viewModel.cityName.value = cityNameDefault

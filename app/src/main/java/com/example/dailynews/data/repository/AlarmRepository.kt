@@ -11,6 +11,7 @@ class AlarmRepository(
     private val sharedPreferenceManager: SharedPreferenceManager
 ) : BaseRepository() {
 
+    // 알람 목록 저장
     fun storeAlarmList(alarmItemsModel: AlarmItemsModel): List<AlarmItemsModel> {
         // 원래 있던 알람 리스트
         var oldList = if (sharedPreferenceManager.alarmList == "") JSONArray()
@@ -23,9 +24,9 @@ class AlarmRepository(
         for (i in 0 until oldList.length()) {
             newList.add(oldList.optString(i))
         }
-        // 새로운 알람 리스트에 새로운 알람 추가
+        // 새로운 알람 목록에 새로운 알람 추가
         newList.add(alarmItemsModel.time + alarmItemsModel.alarmCode.toString() + alarmItemsModel.content)
-        // 저장소에 새로운 알람 리스트 덮어쓰기
+        // storage 에 새로운 알람 리스트 덮어쓰기
         sharedPreferenceManager.alarmList = newList.toString()
         // 새로운 알람 모델에 기존 알람을 모델로 변환해 추가
         oldList = JSONArray(sharedPreferenceManager.alarmList)
@@ -42,6 +43,7 @@ class AlarmRepository(
         return newModel
     }
 
+    // 알람 목록 초기화
     fun initAlarm(): List<AlarmItemsModel> {
         val alarmList = if (sharedPreferenceManager.alarmList == "") JSONArray()
         else JSONArray(sharedPreferenceManager.alarmList)
@@ -59,6 +61,7 @@ class AlarmRepository(
         return alarmModel
     }
 
+    // 알람 삭제
     fun deleteAlarmList(alarmCode: Int): List<AlarmItemsModel> {
         val oldList = JSONArray(sharedPreferenceManager.alarmList)
         val newList = JsonArray()
@@ -80,6 +83,7 @@ class AlarmRepository(
         return newModel
     }
 
+    // 모든 알람 삭제
     fun deleteAllAlarm(){
         sharedPreferenceManager.clearAll()
     }

@@ -24,8 +24,9 @@ class WeatherViewModel(
     val responseWeather = MutableLiveData<WeatherModel>()
     val responseForecast = MutableLiveData<ForecastModel>()
 
-    val cityName = MutableLiveData("Seoul")
+    val cityName = MutableLiveData<String>()
 
+    // 날씨 정보 가져오기
     fun getWeatherInfoView(cityName: String, appid: String) {
         //  진행 중 작업 취소
         job.cancelChildren()
@@ -38,6 +39,7 @@ class WeatherViewModel(
         }.launchIn(ioScope)
     }
 
+    // 날씨 예보 가져오기
     fun getForecastInfoView(cityName: String, appid: String) {
         //  진행 중 작업 취소
         job.cancelChildren()

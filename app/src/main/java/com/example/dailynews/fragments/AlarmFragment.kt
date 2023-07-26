@@ -64,17 +64,20 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
 
     private fun setBinding() {
         with(binding) {
+            // RecyclerView 설정
             with(alarmRecyclerView) {
                 adapter = alarmAdapter.also { it.initList(mutableListOf()) }
                 layoutManager = LinearLayoutManager(requireContext())
             }
 
+            // 알람 추가 버튼
             with(alarmAddButton) {
                 setOnClickListener {
                     resetAlarmLayout()
                 }
             }
 
+            // 알람 삭제 버튼
             with(alarmCancelButton) {
                 setOnClickListener {
                     resetAlarmLayout(false)
@@ -82,6 +85,7 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
                 }
             }
 
+            // 알람 확인 버튼
             with(alarmConfirmButton) {
                 setOnClickListener {
                     val setTime =
@@ -135,7 +139,6 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
         var dateTime = Date()
         try {
             dateTime = dateFormat.parse(time) as Date
-            Logger.debug("DTE 2 $dateTime")
         } catch (e: ParseException) {
             e.printStackTrace()
         }
@@ -152,13 +155,12 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
 
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis.also {
-                Logger.debug("DTE $it")
-            },
+            calendar.timeInMillis,
             pendingIntent
         )
     }
 
+    // 알람 삭제 팝업
     fun showCancelAlarmDialog(content: String, alarmTime: String, alarmCode: Int) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("알람을 삭제하시겠습니까?")
@@ -172,7 +174,7 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
     }
 
     // 알람 취소
-    fun cancelAlarm(alarmCode: Int) {
+    private fun cancelAlarm(alarmCode: Int) {
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
 
@@ -191,12 +193,14 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
         alarmAdapter.initList(viewModel.deleteAlarmList(alarmCode))
     }
 
+    // 알람 설정 Layout 열기/닫기
     private fun resetAlarmLayout(visibility: Boolean? = true) {
         binding.alarmEditText.setText("")
         binding.alarmAddLayout.visibility =
             if (visibility == true) View.VISIBLE else View.GONE
     }
 
+    // 알람 설정 TimePicker 초기화
     private fun resetTime() {
         binding.alarmTimePicker.hour = LocalTime.now().hour
         binding.alarmTimePicker.minute = LocalTime.now().minute
