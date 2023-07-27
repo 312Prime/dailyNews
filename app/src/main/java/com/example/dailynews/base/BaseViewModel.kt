@@ -1,9 +1,13 @@
 package com.example.dailynews.base
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.plus
 
 abstract class BaseViewModel : ViewModel() {
@@ -12,6 +16,9 @@ abstract class BaseViewModel : ViewModel() {
 
     protected val ioScope get() = CoroutineScope(job) + Dispatchers.IO
     protected val retries: Long = 2
+
+    protected val isLoading = MutableStateFlow(false)
+    val loading = isLoading.asLiveData(viewModelScope.coroutineContext)
 
     override fun onCleared() {
         job.cancel()

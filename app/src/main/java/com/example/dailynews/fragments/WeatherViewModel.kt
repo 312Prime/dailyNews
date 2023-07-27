@@ -33,9 +33,13 @@ class WeatherViewModel(
         // 서버 통신 : 날씨 API 불러오기
         flow {
             weatherRepository.getWeatherInfo(cityName = cityName, appid = appid).also { emit(it) }
-        }.onStart { }.onEach { data ->
+        }.onStart {
+            isLoading.value = true
+        }.onEach { data ->
             isSuccessWeather.postValue(true)
             responseWeather.postValue(data)
+        }.onCompletion {
+            isLoading.value = false
         }.launchIn(ioScope)
     }
 
@@ -46,9 +50,13 @@ class WeatherViewModel(
         // 서버 통신 : 날씨 API 불러오기
         flow {
             weatherRepository.getForecastInfo(cityName = cityName, appid = appid).also { emit(it) }
-        }.onStart { }.onEach { data ->
+        }.onStart {
+            isLoading.value = true
+        }.onEach { data ->
             isSuccessForecast.postValue(true)
             responseForecast.postValue(data)
+        }.onCompletion {
+            isLoading.value = false
         }.launchIn(ioScope)
     }
 }

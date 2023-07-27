@@ -13,8 +13,10 @@ import android.view.animation.AnticipateInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.lifecycle.Observer
 import com.example.dailynews.base.BaseActivity
 import com.example.dailynews.databinding.ActivityMainBinding
 import com.example.dailynews.fragments.AlarmFragment
@@ -41,11 +43,17 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setBinding()
+        setObserver()
     }
 
     private fun setBinding() {
         with(binding) {
             setContentView(this.root)
+
+            with(mainLoadingLottie) {
+                playAnimation()
+            }
+
             supportFragmentManager.commit {
                 replace(frameLayoutId, getFragment("날씨"))
             }
@@ -56,6 +64,13 @@ class MainActivity : BaseActivity() {
         }
 
         initSplashScreen()
+    }
+
+    private fun setObserver() {
+        viewModel.loading.observe(this) {
+            Logger.debug("DTE $it")
+            binding.loadingFrameLayout.isVisible = it
+        }
     }
 
     // splash 보여주기
