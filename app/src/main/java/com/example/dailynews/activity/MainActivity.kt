@@ -68,7 +68,6 @@ class MainActivity : BaseActivity() {
 
     private fun setObserver() {
         viewModel.loading.observe(this) {
-            Logger.debug("DTE $it")
             binding.loadingFrameLayout.isVisible = it
         }
     }
