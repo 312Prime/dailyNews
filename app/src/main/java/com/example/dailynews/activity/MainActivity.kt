@@ -50,10 +50,6 @@ class MainActivity : BaseActivity() {
         with(binding) {
             setContentView(this.root)
 
-            with(mainLoadingLottie) {
-                playAnimation()
-            }
-
             supportFragmentManager.commit {
                 replace(frameLayoutId, getFragment("날씨"))
             }
@@ -67,9 +63,6 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setObserver() {
-        viewModel.loading.observe(this) {
-            binding.loadingFrameLayout.isVisible = it
-        }
     }
 
     // splash 보여주기

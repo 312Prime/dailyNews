@@ -15,10 +15,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.dailynews.R
+import com.example.dailynews.activity.MainViewModel
 import com.example.dailynews.adapter.WeatherAdapter
 import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentWeatherBinding
@@ -30,11 +33,11 @@ import java.io.IOException
 import java.util.Locale
 
 // 날씨 Fragment
-class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
+class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
     private var _binding: FragmentWeatherBinding? = null
-
     private val binding get() = _binding!!
+
     private lateinit var locationManager: LocationManager
 
     private val viewModel by viewModel<WeatherViewModel>()
@@ -58,8 +61,8 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setBinding()
-        getCityName()
         setObserver()
+        getCityName()
     }
 
     override fun onResume() {
@@ -98,6 +101,10 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
 
     private fun setBinding() {
         with(binding) {
+            with(weatherLoadingLottie){
+                playAnimation()
+            }
+
             with(weatherRecyclerView) {
                 adapter = weatherAdapter.also { it.initList(mutableListOf()) }
                 layoutManager = GridLayoutManager(requireContext(), 3)
@@ -107,6 +114,11 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
 
     @SuppressLint("SetTextI18n")
     private fun setObserver() {
+        viewModel.loading.observe(viewLifecycleOwner){
+            binding.weatherLoadingFrameLayout.isVisible = it
+        }
+
+        // 도시 정보 observe
         var currentCityName = ""
         viewModel.cityName.observe(
             viewLifecycleOwner, Observer { cityName ->
@@ -118,6 +130,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_todo) {
                 }
             }
         )
+
         viewModel.isSuccessWeather.observe(
             viewLifecycleOwner, Observer { it ->
                 if (it) {

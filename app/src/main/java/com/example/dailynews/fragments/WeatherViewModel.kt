@@ -5,8 +5,10 @@ import com.example.dailynews.base.BaseViewModel
 import com.example.dailynews.data.repository.WeatherRepository
 import com.example.dailynews.model.ForecastModel
 import com.example.dailynews.model.WeatherModel
+import com.example.dailynews.tools.exceptionManager.ExceptionManager
 import com.example.dailynews.tools.logger.Logger
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
@@ -16,7 +18,8 @@ import kotlinx.coroutines.flow.retry
 import org.json.JSONObject
 
 class WeatherViewModel(
-    private val weatherRepository: WeatherRepository
+    private val weatherRepository: WeatherRepository,
+    private val exceptionManager: ExceptionManager
 ) : BaseViewModel() {
 
     val isSuccessWeather = MutableLiveData<Boolean>()
@@ -38,6 +41,10 @@ class WeatherViewModel(
         }.onEach { data ->
             isSuccessWeather.postValue(true)
             responseWeather.postValue(data)
+        }.retry(retries) {
+            exceptionManager.delayRetry(it)
+        }.catch {
+            exceptionManager.log(it)
         }.onCompletion {
             isLoading.value = false
         }.launchIn(ioScope)
@@ -55,6 +62,10 @@ class WeatherViewModel(
         }.onEach { data ->
             isSuccessForecast.postValue(true)
             responseForecast.postValue(data)
+        }.retry(retries) {
+            exceptionManager.delayRetry(it)
+        }.catch {
+            exceptionManager.log(it)
         }.onCompletion {
             isLoading.value = false
         }.launchIn(ioScope)

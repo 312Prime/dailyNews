@@ -16,7 +16,8 @@ object ViewModelModule {
         }
         viewModel {
             WeatherViewModel(
-                weatherRepository = get()
+                weatherRepository = get(),
+                exceptionManager = get()
             )
         }
         viewModel {
@@ -26,7 +27,8 @@ object ViewModelModule {
         }
         viewModel {
             NewsViewModel(
-                newsRepository = get()
+                newsRepository = get(),
+                exceptionManager = get()
             )
         }
         viewModel {

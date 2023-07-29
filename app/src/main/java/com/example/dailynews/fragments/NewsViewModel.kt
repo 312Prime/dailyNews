@@ -5,14 +5,19 @@ import com.example.dailynews.base.BaseViewModel
 import com.example.dailynews.data.repository.NewsRepository
 import com.example.dailynews.model.NewsItemsModel
 import com.example.dailynews.model.NewsListModel
+import com.example.dailynews.tools.exceptionManager.ExceptionManager
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.retry
 
 class NewsViewModel(
-    private val newsRepository: NewsRepository
+    private val newsRepository: NewsRepository,
+    private val exceptionManager: ExceptionManager
 ) : BaseViewModel() {
 
     val isSuccessNews = MutableLiveData<Boolean>()
@@ -26,9 +31,17 @@ class NewsViewModel(
         //  서버 통신 : 뉴스 API 불러오기
         flow {
             newsRepository.getNewsInfo(searchingMessage).also { emit(it) }
-        }.onStart { }.onEach { data ->
+        }.onStart {
+            isLoading.value = true
+        }.onEach { data ->
             isSuccessNews.postValue(true)
             responseNews.postValue(data)
+        }.retry(retries) {
+            exceptionManager.delayRetry(it)
+        }.catch {
+            exceptionManager.log(it)
+        }.onCompletion {
+            isLoading.value = false
         }.launchIn(ioScope)
     }
 }

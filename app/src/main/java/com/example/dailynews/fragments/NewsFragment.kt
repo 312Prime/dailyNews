@@ -17,7 +17,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class NewsFragment : BaseFragment(R.layout.fragment_news) {
 
     private var _binding: FragmentNewsBinding? = null
-
     private val binding get() = _binding!!
 
     private val viewModel by viewModel<NewsViewModel>()
@@ -57,6 +56,10 @@ class NewsFragment : BaseFragment(R.layout.fragment_news) {
 
     private fun setBinding() {
         with(binding) {
+            with(newsLoadingLottie){
+                playAnimation()
+            }
+
             with(newsRecyclerView) {
                 adapter = newsAdapter.also { it.initList(mutableListOf()) }
                 layoutManager = LinearLayoutManager(requireContext())
@@ -71,6 +74,10 @@ class NewsFragment : BaseFragment(R.layout.fragment_news) {
     }
 
     private fun setObserver() {
+        viewModel.loading.observe(viewLifecycleOwner){
+            binding.newsLoadingFrameLayout.isVisible = it
+        }
+
         viewModel.responseNews.observe(
             viewLifecycleOwner, Observer { news ->
                 newsAdapter.initList(news.items)
@@ -86,7 +93,7 @@ class NewsFragment : BaseFragment(R.layout.fragment_news) {
     }
 
     // 웹뷰 닫기
-    private fun closeWebView(){
+    private fun closeWebView() {
         binding.newsWebViewLayout.visibility = View.GONE
     }
 }
