@@ -8,6 +8,7 @@ import com.example.dailynews.model.WeatherModel
 import com.example.dailynews.tools.exceptionManager.ExceptionManager
 import com.example.dailynews.tools.logger.Logger
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
@@ -22,10 +23,10 @@ class WeatherViewModel(
     private val exceptionManager: ExceptionManager
 ) : BaseViewModel() {
 
-    val isSuccessWeather = MutableLiveData<Boolean>()
-    val isSuccessForecast = MutableLiveData<Boolean>()
-    val responseWeather = MutableLiveData<WeatherModel>()
-    val responseForecast = MutableLiveData<ForecastModel>()
+    val isSuccessWeather = MutableStateFlow(false)
+    val isSuccessForecast = MutableStateFlow(false)
+    val responseWeather = MutableStateFlow(false)
+    val responseForecast = MutableStateFlow(false)
 
     val cityName = MutableLiveData<String>()
 
@@ -39,8 +40,8 @@ class WeatherViewModel(
         }.onStart {
             isLoading.value = true
         }.onEach { data ->
-            isSuccessWeather.postValue(true)
-            responseWeather.postValue(data)
+            isSuccessWeather.value = true
+            responseWeather.value = true
         }.retry(retries) {
             exceptionManager.delayRetry(it)
         }.catch {
@@ -60,8 +61,8 @@ class WeatherViewModel(
         }.onStart {
             isLoading.value = true
         }.onEach { data ->
-            isSuccessForecast.postValue(true)
-            responseForecast.postValue(data)
+            isSuccessForecast.value = true
+            responseForecast.value = true
         }.retry(retries) {
             exceptionManager.delayRetry(it)
         }.catch {
