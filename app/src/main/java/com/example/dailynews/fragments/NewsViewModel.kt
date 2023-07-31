@@ -7,6 +7,7 @@ import com.example.dailynews.model.NewsItemsModel
 import com.example.dailynews.model.NewsListModel
 import com.example.dailynews.tools.exceptionManager.ExceptionManager
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
@@ -20,8 +21,8 @@ class NewsViewModel(
     private val exceptionManager: ExceptionManager
 ) : BaseViewModel() {
 
-    val isSuccessNews = MutableLiveData<Boolean>()
-    val responseNews = MutableLiveData<NewsListModel>()
+    val isSuccessNews =  MutableStateFlow(false)
+    val responseNews = MutableStateFlow(false)
 
     val searchingMessage = MutableLiveData("")
 
