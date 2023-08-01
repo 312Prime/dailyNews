@@ -1,14 +1,14 @@
 package com.example.dailynews.fragments
 
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import com.example.dailynews.base.BaseViewModel
 import com.example.dailynews.data.repository.WeatherRepository
 import com.example.dailynews.model.ForecastModel
 import com.example.dailynews.model.WeatherModel
 import com.example.dailynews.tools.exceptionManager.ExceptionManager
-import com.example.dailynews.tools.logger.Logger
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
@@ -16,19 +16,23 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
-import org.json.JSONObject
 
 class WeatherViewModel(
     private val weatherRepository: WeatherRepository,
     private val exceptionManager: ExceptionManager
 ) : BaseViewModel() {
 
-    val isSuccessWeather = MutableStateFlow(false)
-    val isSuccessForecast = MutableStateFlow(false)
-    val responseWeather = MutableStateFlow(false)
-    val responseForecast = MutableStateFlow(false)
+    private val _responseWeather = MutableStateFlow<WeatherModel?>(null)
+    val responseWeather = _responseWeather.asLiveData()
+    private val _responseForecast = MutableStateFlow<ForecastModel?>(null)
+    val responseForecast = _responseForecast.asLiveData()
 
-    val cityName = MutableLiveData<String>()
+    private val _cityName = MutableStateFlow("")
+    val cityName = _cityName.asLiveData()
+
+    fun setCityName(newCityName: String) {
+        _cityName.value = newCityName
+    }
 
     // 날씨 정보 가져오기
     fun getWeatherInfoView(cityName: String, appid: String) {
@@ -40,8 +44,7 @@ class WeatherViewModel(
         }.onStart {
             isLoading.value = true
         }.onEach { data ->
-            isSuccessWeather.value = true
-            responseWeather.value = true
+            _responseWeather.value = data
         }.retry(retries) {
             exceptionManager.delayRetry(it)
         }.catch {
@@ -61,8 +64,7 @@ class WeatherViewModel(
         }.onStart {
             isLoading.value = true
         }.onEach { data ->
-            isSuccessForecast.value = true
-            responseForecast.value = true
+            _responseForecast.value = data
         }.retry(retries) {
             exceptionManager.delayRetry(it)
         }.catch {

@@ -1,6 +1,7 @@
 package com.example.dailynews.fragments
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import com.example.dailynews.base.BaseViewModel
 import com.example.dailynews.data.repository.NewsRepository
 import com.example.dailynews.model.NewsItemsModel
@@ -8,6 +9,7 @@ import com.example.dailynews.model.NewsListModel
 import com.example.dailynews.tools.exceptionManager.ExceptionManager
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
@@ -17,12 +19,10 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retry
 
 class NewsViewModel(
-    private val newsRepository: NewsRepository,
-    private val exceptionManager: ExceptionManager
+    private val newsRepository: NewsRepository, private val exceptionManager: ExceptionManager
 ) : BaseViewModel() {
-
-    val isSuccessNews =  MutableStateFlow(false)
-    val responseNews = MutableStateFlow(false)
+    private val _responseNews = MutableStateFlow<NewsListModel?>(null)
+    val responseNews = _responseNews.asLiveData()
 
     val searchingMessage = MutableLiveData("")
 
@@ -35,8 +35,7 @@ class NewsViewModel(
         }.onStart {
             isLoading.value = true
         }.onEach { data ->
-            isSuccessNews.postValue(true)
-            responseNews.postValue(data)
+            _responseNews.value = data
         }.retry(retries) {
             exceptionManager.delayRetry(it)
         }.catch {

@@ -16,18 +16,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.dailynews.R
-import com.example.dailynews.activity.MainViewModel
 import com.example.dailynews.adapter.WeatherAdapter
 import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentWeatherBinding
 import com.example.dailynews.model.WeatherModel
-import com.example.dailynews.tools.customDialog.CustomDialog
-import com.example.dailynews.tools.logger.Logger
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.util.Locale
@@ -45,44 +41,37 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     private val weatherAdapter by lazy { WeatherAdapter(requireContext()) }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWeatherBinding.inflate(
-            inflater,
-            container,
-            false
+            inflater, container, false
         )
         locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
+
+        lifecycleScope.launchWhenStarted { setObserver() }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setBinding()
-        setObserver()
         getCityName()
     }
 
     override fun onResume() {
         super.onResume()
         if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             // 위치 권한이 없을 경우 권한 요청
             ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
+                requireActivity(), arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                REQUEST_LOCATION_PERMISSION
+                ), REQUEST_LOCATION_PERMISSION
             )
         } else {
             getCityName()
@@ -101,7 +90,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
     private fun setBinding() {
         with(binding) {
-            with(weatherLoadingLottie){
+            with(weatherLoadingLottie) {
                 playAnimation()
             }
 
@@ -113,63 +102,41 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setObserver() {
-        viewModel.loading.observe(viewLifecycleOwner){
+    private suspend fun setObserver() {
+        viewModel.loading.observe(viewLifecycleOwner) {
             binding.weatherLoadingFrameLayout.isVisible = it
         }
 
         // 도시 정보 observe
         var currentCityName = ""
-        viewModel.cityName.observe(
-            viewLifecycleOwner, Observer { cityName ->
-                binding.weatherCityName.text = cityName
-                if (viewModel.cityName.value != currentCityName) {
-                    currentCityName = viewModel.cityName.value!!
-                    // 날씨 정보 호출
-                    viewModel.getWeatherInfoView(cityName, getString(R.string.weather_key))
-                }
+        viewModel.cityName.observe(viewLifecycleOwner) { cityName ->
+            binding.weatherCityName.text = cityName
+            if (viewModel.cityName.value != currentCityName) {
+                currentCityName = viewModel.cityName.value!!
+                // 날씨 정보 호출
+                viewModel.getWeatherInfoView(cityName, getString(R.string.weather_key))
             }
-        )
+        }
 
-        viewModel.isSuccessWeather.observe(
-            viewLifecycleOwner, Observer { it ->
-                if (it) {
-                    viewModel.responseWeather.observe(
-                        viewLifecycleOwner, Observer {
-                            // 날씨 예보 호출
-                            viewModel.getForecastInfoView(
-                                viewModel.cityName.value!!,
-                                getString(R.string.weather_key)
-                            )
-                            setWeatherData(it)
-                            binding.weatherTemperatureState.text =
-                                if (it.main.temp == null) "미확인" else "%.1f 'c".format(it.main.temp!! - 273.15)
-                            binding.weatherCloudShapeState.text = it.weather[0].description
-                            binding.weatherWindState.text = it.wind.speed.toString() + " m/s"
-                            binding.weatherCloudState.text = it.clouds.all.toString() + " %"
-                            binding.weatherHumidity.text = it.main.humidity.toString() + " %"
-                        }
-                    )
-                } else {
-                    val customDialog = CustomDialog(requireContext())
-                    customDialog.show(getString(R.string.app_name), "현재 날씨 조회 실패")
-                }
+        viewModel.responseWeather.observe(viewLifecycleOwner) { model ->
+            if (model != null) {
+                // 날씨 예보 호출
+                viewModel.getForecastInfoView(
+                    viewModel.cityName.value!!, getString(R.string.weather_key)
+                )
+                setWeatherData(model)
+                binding.weatherTemperatureState.text =
+                    if (model.main.temp == null) "미확인" else "%.1f 'c".format(model.main.temp!! - 273.15)
+                binding.weatherCloudShapeState.text = model.weather[0].description
+                binding.weatherWindState.text = model.wind.speed.toString() + " m/s"
+                binding.weatherCloudState.text = model.clouds.all.toString() + " %"
+                binding.weatherHumidity.text = model.main.humidity.toString() + " %"
             }
-        )
-        viewModel.isSuccessForecast.observe(
-            viewLifecycleOwner, Observer { it ->
-                if (it) {
-                    viewModel.responseForecast.observe(
-                        viewLifecycleOwner, Observer { model ->
-                            if (model.list != null) weatherAdapter.initList(model.list!!)
-                        }
-                    )
-                } else {
-                    val customDialog = CustomDialog(requireContext())
-                    customDialog.show(getString(R.string.app_name), "날씨 예보 조회 실패")
-                }
-            }
-        )
+        }
+
+        viewModel.responseForecast.observe(viewLifecycleOwner) { model ->
+            if (model?.list != null) weatherAdapter.initList(model.list!!)
+        }
     }
 
     // 도시 이름 가져오기
@@ -177,10 +144,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     private fun getCityName() {
         if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                0,
-                0f,
-                locationListener
+                LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener
             )
         } else {
             Toast.makeText(requireContext(), "위치 서비스를 사용할 수 없습니다.", Toast.LENGTH_SHORT).show()
@@ -193,13 +157,10 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
         Glide.with(this).load(
             resources.getDrawable(
                 resources.getIdentifier(
-                    "icon_" + model.weather[0].icon,
-                    "drawable",
-                    requireActivity().packageName
+                    "icon_" + model.weather[0].icon, "drawable", requireActivity().packageName
                 )
             )
-        ).placeholder(R.drawable.ic_launcher)
-            .error(R.drawable.ic_launcher)
+        ).placeholder(R.drawable.ic_launcher).error(R.drawable.ic_launcher)
             .into(binding.weatherIcon)
     }
 
@@ -216,7 +177,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 if (addresses.isNotEmpty()) {
                     val cityNameDefault =
                         geocoderDefault.getFromLocation(latitude, longitude, 1)[0].locality
-                    viewModel.cityName.value = cityNameDefault
+                    viewModel.setCityName(cityNameDefault)
                 }
             } catch (e: IOException) {
                 e.printStackTrace()

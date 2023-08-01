@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailynews.R
 import com.example.dailynews.adapter.NewsAdapter
 import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentNewsBinding
 import com.example.dailynews.tools.logger.Logger
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NewsFragment : BaseFragment(R.layout.fragment_news) {
@@ -56,7 +58,7 @@ class NewsFragment : BaseFragment(R.layout.fragment_news) {
 
     private fun setBinding() {
         with(binding) {
-            with(newsLoadingLottie){
+            with(newsLoadingLottie) {
                 playAnimation()
             }
 
@@ -74,15 +76,15 @@ class NewsFragment : BaseFragment(R.layout.fragment_news) {
     }
 
     private fun setObserver() {
-        viewModel.loading.observe(viewLifecycleOwner){
-            binding.newsLoadingFrameLayout.isVisible = it
-        }
-
-        viewModel.responseNews.observe(
-            viewLifecycleOwner, Observer { news ->
-                newsAdapter.initList(news.items)
+        lifecycleScope.launchWhenStarted {
+            viewModel.loading.observe(viewLifecycleOwner) {
+                binding.newsLoadingFrameLayout.isVisible = it
             }
-        )
+
+            viewModel.responseNews.observe(viewLifecycleOwner) { news ->
+                if (news != null) newsAdapter.initList(news.items)
+            }
+        }
     }
 
     // 웹뷰 열기
