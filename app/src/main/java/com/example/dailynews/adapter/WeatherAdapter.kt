@@ -9,7 +9,6 @@ import com.bumptech.glide.Glide
 import com.example.dailynews.R
 import com.example.dailynews.databinding.ItemWeatherListBinding
 import com.example.dailynews.model.ForecastListModel
-import com.example.dailynews.tools.logger.Logger
 
 class WeatherAdapter(val context: Context) : RecyclerView.Adapter<WeatherAdapter.ListViewHolder>() {
 

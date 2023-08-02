@@ -29,5 +29,6 @@
     <string name="popup_cancel">취소</string>
     <string name="popup_confirm">확인</string>
     <string name="todo_title">할 일</string>
+    <string name="todo_add_button">할 일 추가하기</string>
 
 </resources>
