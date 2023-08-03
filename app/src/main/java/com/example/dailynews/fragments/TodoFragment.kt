@@ -35,6 +35,7 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setBinding()
+
     }
 
     override fun onDestroyView() {

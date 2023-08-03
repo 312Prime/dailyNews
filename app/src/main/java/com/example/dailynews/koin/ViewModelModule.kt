@@ -33,6 +33,7 @@ object ViewModelModule {
         }
         viewModel {
             TodoViewModel(
+                todoRepository = get()
             )
         }
     }

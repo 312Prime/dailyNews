@@ -102,7 +102,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     }
 
     @SuppressLint("SetTextI18n")
-    private suspend fun setObserver() {
+    private fun setObserver() {
         viewModel.loading.observe(viewLifecycleOwner) {
             binding.weatherLoadingFrameLayout.isVisible = it
         }

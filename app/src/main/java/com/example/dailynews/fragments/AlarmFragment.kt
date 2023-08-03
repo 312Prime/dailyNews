@@ -30,11 +30,11 @@ import java.util.Date
 class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
 
     private var _binding: FragmentAlarmBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel by viewModel<AlarmViewModel>()
 
     private val alarmAdapter by lazy { AlarmAdapter(requireContext(), this) }
-    private val binding get() = _binding!!
 
     private lateinit var pendingIntent: PendingIntent
 

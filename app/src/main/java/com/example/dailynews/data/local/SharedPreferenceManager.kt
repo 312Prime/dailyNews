@@ -10,7 +10,8 @@ class SharedPreferenceManager(applicationContext: Context) {
     }
 
     private enum class PreferenceKeys(val keyName: String) {
-        ALARM_KEY("ALARM_KEY")
+        ALARM_KEY("ALARM_KEY"),
+        TODO_KEY("TODO_KEY")
     }
 
     private val store =
@@ -25,9 +26,29 @@ class SharedPreferenceManager(applicationContext: Context) {
             }
         }
 
-    // value 모두 삭제
-    fun clearAll(){
+    // 저장된 할 일 리스트
+    var todoList: String
+        get() = store.getString(PreferenceKeys.TODO_KEY.keyName, null) ?: ""
+        set(value) {
+            store.edit(commit = true) {
+                this.putString(PreferenceKeys.TODO_KEY.keyName, value)
+            }
+        }
+
+    fun clearAlarm(){
         store.edit(commit = true){
+            this.remove(alarmList)
+        }
+    }
+    fun clearTodoList(){
+        store.edit(commit = true){
+            this.remove(todoList)
+        }
+    }
+
+    // value 모두 삭제
+    fun clearAll() {
+        store.edit(commit = true) {
             PreferenceKeys.values().forEach {
                 this.remove(it.keyName)
             }

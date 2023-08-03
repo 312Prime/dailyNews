@@ -85,6 +85,6 @@ class AlarmRepository(
 
     // 모든 알람 삭제
     fun deleteAllAlarm(){
-        sharedPreferenceManager.clearAll()
+        sharedPreferenceManager.clearAlarm()
     }
 }

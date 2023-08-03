@@ -2,6 +2,7 @@ package com.example.dailynews.koin
 
 import com.example.dailynews.data.repository.AlarmRepository
 import com.example.dailynews.data.repository.NewsRepository
+import com.example.dailynews.data.repository.TodoRepository
 import com.example.dailynews.data.repository.WeatherRepository
 import org.koin.dsl.module
 
@@ -19,6 +20,11 @@ object RepositoryModule {
         }
         single {
             AlarmRepository(
+                sharedPreferenceManager = get()
+            )
+        }
+        single {
+            TodoRepository(
                 sharedPreferenceManager = get()
             )
         }
