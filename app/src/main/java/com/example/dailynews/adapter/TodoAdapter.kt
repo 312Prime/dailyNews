@@ -39,7 +39,8 @@ class TodoAdapter(val context: Context) : RecyclerView.Adapter<TodoAdapter.ListV
 
         fun bindViewHolder(data: TodoModel) {
             with(binding) {
-
+                todoListTitle.text = data.title
+                todoListMessage.text = data.message
             }
         }
     }
