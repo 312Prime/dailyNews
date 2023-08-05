@@ -37,6 +37,8 @@ class TodoAdapter(val context: Context) : RecyclerView.Adapter<TodoAdapter.ListV
     inner class ListViewHolder(private val binding: ItemTodoListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        // header set need
+
         fun bindViewHolder(data: TodoModel) {
             with(binding) {
                 todoListTitle.text = data.title
