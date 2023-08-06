@@ -35,9 +35,9 @@ class TodoRepository(
             val cData = oldList.optString(i)
             newModel.add(
                 TodoModel(
-                    date = cData.substring(0, 4),
-                    title = cData.substring(4, 13),
-                    message = cData.substring(13, cData.length - 2),
+                    date = cData.substring(0, 5),
+                    title = cData.substring(6, 14),
+                    message = cData.substring(14, cData.length - 2),
                     isComplete = cData.last() == '1'
                 )
             )
@@ -52,9 +52,9 @@ class TodoRepository(
         for (i in 0 until todoList.length()) {
             todoModel.add(
                 TodoModel(
-                    date = todoList.optString(i).substring(0, 4),
-                    title = todoList.optString(i).substring(4, 13),
-                    message = todoList.optString(i).substring(13, todoList.optString(i).length - 2),
+                    date = todoList.optString(i).substring(0, 5),
+                    title = todoList.optString(i).substring(6, 14),
+                    message = todoList.optString(i).substring(14, todoList.optString(i).length - 2),
                     isComplete = todoList.optString(i).last() == '1'
                 )
             )
@@ -71,10 +71,10 @@ class TodoRepository(
                 newList.add(oldList.optString(i))
                 newModel.add(
                     TodoModel(
-                        date = oldList.optString(i).substring(0, 4),
-                        title = oldList.optString(i).substring(4, 13),
+                        date = oldList.optString(i).substring(0, 5),
+                        title = oldList.optString(i).substring(6, 14),
                         message = oldList.optString(i)
-                            .substring(13, oldList.optString(i).length - 2),
+                            .substring(14, oldList.optString(i).length - 2),
                         isComplete = oldList.optString(i).last() == '1'
                     )
                 )

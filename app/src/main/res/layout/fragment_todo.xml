@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -55,6 +56,72 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/todoAddLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/todoTitleLayout">
+
+        <DatePicker
+            android:id="@+id/todoDatePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
+            android:spinnersShown="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_constraintDimensionRatio="2:1" />
+
+        <EditText
+            android:id="@+id/todoTitleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:background="@null"
+            android:hint="@string/todo_spinner_title"
+            android:inputType="text"
+            android:maxLength="10"
+            android:textColor="@color/grey_600"
+            android:textColorHint="@color/grey_400"
+            android:textSize="24sp"
+            app:layout_constraintTop_toBottomOf="@id/todoDatePicker"
+            tools:layout_editor_absoluteX="30dp" />
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginBottom="15dp"
+            android:background="@color/grey_300"
+            app:layout_constraintBottom_toTopOf="@id/todoMessageEditText"
+            tools:layout_editor_absoluteX="30dp" />
+
+        <EditText
+            android:id="@+id/todoMessageEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="30dp"
+            android:background="@null"
+            android:hint="@string/todo_spinner_hint"
+            android:inputType="text"
+            android:maxLength="10"
+            android:textColor="@color/grey_600"
+            android:textColorHint="@color/grey_400"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/todoTitleEditText"
+            tools:layout_editor_absoluteX="30dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

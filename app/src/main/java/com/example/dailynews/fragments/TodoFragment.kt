@@ -45,7 +45,11 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
 
     private fun setBinding() {
         with(binding) {
+            with(todoAddButton){
+                setOnClickListener {
 
+                }
+            }
         }
     }
 }
