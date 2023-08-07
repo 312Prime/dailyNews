@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailynews.R
 import com.example.dailynews.adapter.AlarmAdapter
@@ -54,6 +55,7 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setBinding()
+        setObserver()
         alarmAdapter.initList(viewModel.initAlarmList())
     }
 
@@ -104,6 +106,14 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
                     resetTime()
                     resetAlarmLayout(false)
                 }
+            }
+        }
+    }
+
+    private fun setObserver() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.isListEmpty.observe(viewLifecycleOwner) {
+                binding.alarmEmptyTextView.visibility = if (it == true) View.VISIBLE else View.GONE
             }
         }
     }

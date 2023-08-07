@@ -1,13 +1,17 @@
 package com.example.dailynews.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailynews.databinding.ItemTodoListBinding
+import com.example.dailynews.fragments.TodoFragment
 import com.example.dailynews.model.TodoModel
+import com.example.dailynews.tools.logger.Logger
 
-class TodoAdapter(val context: Context) : RecyclerView.Adapter<TodoAdapter.ListViewHolder>() {
+class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
+    RecyclerView.Adapter<TodoAdapter.ListViewHolder>() {
 
     private var todoItems = mutableListOf<TodoModel>()
 
@@ -34,15 +38,36 @@ class TodoAdapter(val context: Context) : RecyclerView.Adapter<TodoAdapter.ListV
         return todoItems.size
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun initList(newList: List<TodoModel>) {
+        with(todoItems) {
+            clear()
+            addAll(newList)
+            Logger.debug("DTE CHECK $newList")
+        }
+        notifyDataSetChanged()
+    }
+
     inner class ListViewHolder(private val binding: ItemTodoListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         // header set need
 
+        @SuppressLint("NotifyDataSetChanged")
         fun bindViewHolder(data: TodoModel) {
             with(binding) {
                 todoListTitle.text = data.title
                 todoListMessage.text = data.message
+                todoListDeleteButton.setOnClickListener {
+                    todoFragment.showCancelTodoDialog(
+                        date =
+                        "${data.date.substring(0, 4)}년 " +
+                                "${data.date.substring(4, 6)}월 " +
+                                "${data.date.substring(6, 8)}일",
+                        title = data.title,
+                        message = data.message
+                    )
+                }
             }
         }
     }

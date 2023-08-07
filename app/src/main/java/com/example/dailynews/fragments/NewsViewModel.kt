@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.retry
 class NewsViewModel(
     private val newsRepository: NewsRepository, private val exceptionManager: ExceptionManager
 ) : BaseViewModel() {
+
     private val _responseNews = MutableStateFlow<NewsListModel?>(null)
     val responseNews = _responseNews.asLiveData()
 

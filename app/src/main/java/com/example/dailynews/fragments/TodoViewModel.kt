@@ -19,4 +19,8 @@ class TodoViewModel(
     fun deleteTodoList(todoListString: String): List<TodoModel> {
         return todoRepository.deleteTodoList(todoListString)
     }
+
+    fun deleteAllList(){
+        return todoRepository.deleteAllTodoList()
+    }
 }

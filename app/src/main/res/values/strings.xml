@@ -32,5 +32,6 @@
     <string name="todo_add_button">할 일 추가하기</string>
     <string name="todo_spinner_hint">내용을 입력해주세요</string>
     <string name="todo_spinner_title">제목을 입력해주세요</string>
+    <string name="alarm_add_hint">알람을 설정해 주세요</string>
 
 </resources>

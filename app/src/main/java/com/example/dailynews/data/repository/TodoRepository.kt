@@ -3,6 +3,7 @@ package com.example.dailynews.data.repository
 import com.example.dailynews.base.BaseRepository
 import com.example.dailynews.data.local.SharedPreferenceManager
 import com.example.dailynews.model.TodoModel
+import com.example.dailynews.tools.logger.Logger
 import com.google.gson.JsonArray
 import org.json.JSONArray
 
@@ -20,11 +21,11 @@ class TodoRepository(
             newList.add(oldList.optString(i))
         }
 
-        val newDate = ""
-        val newTitle =
-            todoModel.title.also { for (i in 0 until 10 - todoModel.title.length) it.plus("") }
+        val newDate = todoModel.date
+        var newTitle = todoModel.title
+        for (i in 0 until 10 - todoModel.title.length) newTitle = "$newTitle "
         val newMessage = todoModel.message
-        val newIsComplete = if (todoModel.isComplete) 1 else 0
+        val newIsComplete = if (todoModel.isComplete) "1" else "0"
 
         newList.add(newDate + newTitle + newMessage + newIsComplete)
 
@@ -33,14 +34,16 @@ class TodoRepository(
         oldList = JSONArray(sharedPreferenceManager.todoList)
         for (i in 0 until oldList.length()) {
             val cData = oldList.optString(i)
-            newModel.add(
-                TodoModel(
-                    date = cData.substring(0, 5),
-                    title = cData.substring(6, 14),
-                    message = cData.substring(14, cData.length - 2),
-                    isComplete = cData.last() == '1'
+            if (cData.length > 18)
+                newModel.add(
+                    TodoModel(
+                        date = cData.substring(0, 8),
+                        title = cData.substring(8, 18),
+                        message = if (cData.length == 19) ""
+                        else cData.substring(18, cData.length - 1),
+                        isComplete = cData.last() == '1'
+                    )
                 )
-            )
         }
         return newModel
     }
@@ -50,14 +53,17 @@ class TodoRepository(
         else JSONArray(sharedPreferenceManager.todoList)
         val todoModel = mutableListOf<TodoModel>()
         for (i in 0 until todoList.length()) {
-            todoModel.add(
-                TodoModel(
-                    date = todoList.optString(i).substring(0, 5),
-                    title = todoList.optString(i).substring(6, 14),
-                    message = todoList.optString(i).substring(14, todoList.optString(i).length - 2),
-                    isComplete = todoList.optString(i).last() == '1'
+            if (todoList.optString(i).length > 14)
+                todoModel.add(
+                    TodoModel(
+                        date = todoList.optString(i).substring(0, 8),
+                        title = todoList.optString(i).substring(8, 18),
+                        message = if (todoList.optString(i).length == 19) ""
+                        else todoList.optString(i).substring(18, todoList.optString(i).length - 1),
+                        isComplete = todoList.optString(i).last() == '1'
+                    )
                 )
-            )
+            else Logger.debug("DTE initFail")
         }
         return todoModel
     }
@@ -71,10 +77,10 @@ class TodoRepository(
                 newList.add(oldList.optString(i))
                 newModel.add(
                     TodoModel(
-                        date = oldList.optString(i).substring(0, 5),
-                        title = oldList.optString(i).substring(6, 14),
-                        message = oldList.optString(i)
-                            .substring(14, oldList.optString(i).length - 2),
+                        date = oldList.optString(i).substring(0, 8),
+                        title = oldList.optString(i).substring(8, 18),
+                        message = if (oldList.optString(i).length == 19) ""
+                        else oldList.optString(i).substring(18, oldList.optString(i).length - 1),
                         isComplete = oldList.optString(i).last() == '1'
                     )
                 )
@@ -85,6 +91,6 @@ class TodoRepository(
     }
 
     fun deleteAllTodoList() {
-        sharedPreferenceManager.clearTodoList()
+        sharedPreferenceManager.clearAll()
     }
 }
