@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dailynews.R
 import com.example.dailynews.adapter.TodoAdapter
@@ -90,7 +91,13 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
         }
     }
 
-    private fun setObserver() {}
+    private fun setObserver() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.isListEmpty.observe(viewLifecycleOwner) {
+                binding.todoEmptyTextView.visibility = if (it == true) View.VISIBLE else View.GONE
+            }
+        }
+    }
 
 
     private fun showTitleTodoDialog() {
@@ -117,7 +124,10 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
 
     private fun resetDatePicker() {
         binding.todoDatePicker.init(
-            LocalDate.now().year, LocalDate.now().monthValue - 1, LocalDate.now().dayOfMonth, null
+            LocalDate.now().year,
+            LocalDate.now().monthValue - 1,
+            LocalDate.now().dayOfMonth,
+            null
         )
     }
 }
