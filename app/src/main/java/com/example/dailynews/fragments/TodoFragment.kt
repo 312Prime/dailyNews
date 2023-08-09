@@ -38,7 +38,7 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
         super.onViewCreated(view, savedInstanceState)
         setBinding()
         setObserver()
-        todoAdapter.initList(viewModel.initTodoList().also { Logger.debug("DTE $it") })
+        todoAdapter.initList(viewModel.initTodoList())
     }
 
     override fun onDestroyView() {
@@ -75,16 +75,15 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
                                 (binding.todoDatePicker.month + 1).toString() +
                                 (if (binding.todoDatePicker.dayOfMonth < 10) "0" else "") +
                                 binding.todoDatePicker.dayOfMonth
-                        viewModel.saveTodoList(
-                            TodoModel(
-                                title = binding.todoTitleEditText.text.toString(),
-                                message = binding.todoMessageEditText.text.toString(),
-                                date = date,
-                                isComplete = false
-                            )
+                        val newModel = TodoModel(
+                            title = binding.todoTitleEditText.text.toString(),
+                            message = binding.todoMessageEditText.text.toString(),
+                            date = date,
+                            isComplete = false
                         )
-                        resetTodoLayout(false)
+                        todoAdapter.initList(viewModel.saveTodoList(newModel))
                         resetDatePicker()
+                        resetTodoLayout(false)
                     }
                 }
             }
@@ -107,10 +106,12 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
         builder.show()
     }// 알람 삭제 팝업
 
-    fun showCancelTodoDialog(date: String, title: String, message: String) {
+    fun showCancelTodoDialog(date: String, title: String, message: String, todoCode: String) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("할 일을 삭제하시겠습니까?").setMessage("$date \n$title \n$message")
-            .setPositiveButton("확인") { _, _ -> }
+            .setPositiveButton("확인") { _, _ ->
+                todoAdapter.initList(viewModel.deleteTodoList(todoCode))
+            }
             .setNegativeButton("취소") { _, _ ->
             }
         builder.show()

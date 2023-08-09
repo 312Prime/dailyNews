@@ -63,7 +63,6 @@ class TodoRepository(
                         isComplete = todoList.optString(i).last() == '1'
                     )
                 )
-            else Logger.debug("DTE initFail")
         }
         return todoModel
     }

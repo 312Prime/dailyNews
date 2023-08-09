@@ -43,7 +43,6 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
         with(todoItems) {
             clear()
             addAll(newList)
-            Logger.debug("DTE CHECK $newList")
         }
         notifyDataSetChanged()
     }
@@ -65,7 +64,8 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
                                 "${data.date.substring(4, 6)}월 " +
                                 "${data.date.substring(6, 8)}일",
                         title = data.title,
-                        message = data.message
+                        message = data.message,
+                        todoCode = data.date + data.title + data.message + if (data.isComplete) 1 else 0
                     )
                 }
             }
