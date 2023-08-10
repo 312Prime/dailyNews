@@ -68,6 +68,9 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
                         todoCode = data.date + data.title + data.message + if (data.isComplete) 1 else 0
                     )
                 }
+                todoLayout.setOnClickListener {
+                    todoFragment.changeIsCompleteTodo()
+                }
             }
         }
     }

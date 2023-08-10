@@ -98,6 +98,9 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
         }
     }
 
+    fun changeIsCompleteTodo(){
+
+    }
 
     private fun showTitleTodoDialog() {
         val builder = AlertDialog.Builder(requireContext())
