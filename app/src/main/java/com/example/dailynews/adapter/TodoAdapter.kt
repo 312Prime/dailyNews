@@ -2,9 +2,12 @@ package com.example.dailynews.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.dailynews.R
 import com.example.dailynews.databinding.ItemTodoListBinding
 import com.example.dailynews.fragments.TodoFragment
 import com.example.dailynews.model.TodoModel
@@ -57,6 +60,11 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
             with(binding) {
                 todoListTitle.text = data.title
                 todoListMessage.text = data.message
+                todoListTitle.paintFlags = if (data.isComplete) Paint.STRIKE_THRU_TEXT_FLAG else 0
+                todoListTitle.setTextColor(
+                    if (data.isComplete) ContextCompat.getColor(context, R.color.grey_600)
+                    else ContextCompat.getColor(context, R.color.blue_grey_800)
+                )
                 todoListDeleteButton.setOnClickListener {
                     todoFragment.showCancelTodoDialog(
                         date =
@@ -69,7 +77,9 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
                     )
                 }
                 todoLayout.setOnClickListener {
-                    todoFragment.changeIsCompleteTodo()
+                    todoFragment.changeIsCompleteTodo(
+                        data.date + data.title + data.message + if (data.isComplete) 1 else 0
+                    )
                 }
             }
         }

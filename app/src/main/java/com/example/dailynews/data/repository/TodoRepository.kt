@@ -3,7 +3,6 @@ package com.example.dailynews.data.repository
 import com.example.dailynews.base.BaseRepository
 import com.example.dailynews.data.local.SharedPreferenceManager
 import com.example.dailynews.model.TodoModel
-import com.example.dailynews.tools.logger.Logger
 import com.google.gson.JsonArray
 import org.json.JSONArray
 
@@ -34,16 +33,15 @@ class TodoRepository(
         oldList = JSONArray(sharedPreferenceManager.todoList)
         for (i in 0 until oldList.length()) {
             val cData = oldList.optString(i)
-            if (cData.length > 18)
-                newModel.add(
-                    TodoModel(
-                        date = cData.substring(0, 8),
-                        title = cData.substring(8, 18),
-                        message = if (cData.length == 19) ""
-                        else cData.substring(18, cData.length - 1),
-                        isComplete = cData.last() == '1'
-                    )
+            if (cData.length > 18) newModel.add(
+                TodoModel(
+                    date = cData.substring(0, 8),
+                    title = cData.substring(8, 18),
+                    message = if (cData.length == 19) ""
+                    else cData.substring(18, cData.length - 1),
+                    isComplete = cData.last() == '1'
                 )
+            )
         }
         return newModel
     }
@@ -53,16 +51,15 @@ class TodoRepository(
         else JSONArray(sharedPreferenceManager.todoList)
         val todoModel = mutableListOf<TodoModel>()
         for (i in 0 until todoList.length()) {
-            if (todoList.optString(i).length > 14)
-                todoModel.add(
-                    TodoModel(
-                        date = todoList.optString(i).substring(0, 8),
-                        title = todoList.optString(i).substring(8, 18),
-                        message = if (todoList.optString(i).length == 19) ""
-                        else todoList.optString(i).substring(18, todoList.optString(i).length - 1),
-                        isComplete = todoList.optString(i).last() == '1'
-                    )
+            if (todoList.optString(i).length > 14) todoModel.add(
+                TodoModel(
+                    date = todoList.optString(i).substring(0, 8),
+                    title = todoList.optString(i).substring(8, 18),
+                    message = if (todoList.optString(i).length == 19) ""
+                    else todoList.optString(i).substring(18, todoList.optString(i).length - 1),
+                    isComplete = todoList.optString(i).last() == '1'
                 )
+            )
         }
         return todoModel
     }
@@ -89,7 +86,38 @@ class TodoRepository(
         return newModel
     }
 
+    // 할 일 완료 상태 변경
+    fun switchTodoList(todoCode: String, isCompleteTo: Boolean): List<TodoModel> {
+        val oldList = JSONArray(sharedPreferenceManager.todoList)
+        val newList = JsonArray()
+        val newModel = mutableListOf<TodoModel>()
+        for (i in 0 until oldList.length()) {
+            if (todoCode == oldList.optString(i)) {
+                newList.add(todoCode.substring(0, todoCode.length - 1) + if (isCompleteTo) 1 else 0)
+                newModel.add(convertToModel(oldList.optString(i), isCompleteTo))
+            } else {
+                newList.add(oldList.optString(i))
+                newModel.add(
+                    convertToModel(oldList.optString(i), oldList.optString(i).last() == '1')
+                )
+            }
+        }
+        sharedPreferenceManager.todoList = newList.toString()
+        return newModel
+    }
+
     fun deleteAllTodoList() {
         sharedPreferenceManager.clearAll()
+    }
+
+    // string -> TodoModel
+    private fun convertToModel(optString: String, isComplete: Boolean): TodoModel {
+        return TodoModel(
+            date = optString.substring(0, 8),
+            title = optString.substring(8, 18),
+            message = if (optString.length == 19) ""
+            else optString.substring(18, optString.length - 1),
+            isComplete = isComplete
+        )
     }
 }

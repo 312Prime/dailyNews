@@ -98,8 +98,8 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
         }
     }
 
-    fun changeIsCompleteTodo(){
-
+    fun changeIsCompleteTodo(todoCode: String) {
+        todoAdapter.initList(viewModel.switchTodo(todoCode, todoCode.last() != '1'))
     }
 
     private fun showTitleTodoDialog() {

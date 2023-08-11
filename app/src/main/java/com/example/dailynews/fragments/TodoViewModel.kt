@@ -25,7 +25,11 @@ class TodoViewModel(
         return todoRepository.deleteTodoList(todoListString)
     }
 
-    fun deleteAllList(){
+    fun switchTodo(todoCode: String, isCompleteTo: Boolean): List<TodoModel> {
+        return todoRepository.switchTodoList(todoCode, isCompleteTo)
+    }
+
+    fun deleteAllList() {
         return todoRepository.deleteAllTodoList()
     }
 }
