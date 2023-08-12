@@ -4,36 +4,64 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailynews.R
+import com.example.dailynews.databinding.ItemTodoHeaderBinding
 import com.example.dailynews.databinding.ItemTodoListBinding
 import com.example.dailynews.fragments.TodoFragment
 import com.example.dailynews.model.TodoModel
 import com.example.dailynews.tools.logger.Logger
 
 class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
-    RecyclerView.Adapter<TodoAdapter.ListViewHolder>() {
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var todoItems = mutableListOf<TodoModel>()
+    private var todoItems = mutableListOf<HeaderItem>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): TodoAdapter.ListViewHolder {
-        return ListViewHolder(
-            binding = ItemTodoListBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+    ): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_HEADER -> {
+                HeaderViewHolder(
+                    binding = ItemTodoHeaderBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            VIEW_TYPE_ITEM -> {
+                ListViewHolder(
+                    binding = ItemTodoListBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+
+            else -> throw IllegalArgumentException("miss view type")
+        }
     }
 
-    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         todoItems.getOrNull(position)?.let {
-            holder.bindViewHolder(it)
+            when (holder) {
+                is HeaderViewHolder -> {
+                    val headerItem = it as HeaderItem.Header
+                    holder.bindViewHolder(headerItem.text)
+                }
+
+                is ListViewHolder -> {
+                    val listItem = it as HeaderItem.Item
+                    holder.bindViewHolder(listItem.todoModel)
+                }
+            }
         }
     }
 
@@ -41,19 +69,40 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
         return todoItems.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return when (todoItems[position]) {
+            is HeaderItem.Header -> VIEW_TYPE_HEADER
+            is HeaderItem.Item -> VIEW_TYPE_ITEM
+        }
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     fun initList(newList: List<TodoModel>) {
         with(todoItems) {
             clear()
-            addAll(newList)
+            var date = ""
+            newList.forEach {
+                if (it.date != date) {
+                    date = it.date
+                    this.add(HeaderItem.Header(date))
+                }
+                this.add(HeaderItem.Item(it))
+            }
         }
         notifyDataSetChanged()
     }
 
+    inner class HeaderViewHolder(private val binding: ItemTodoHeaderBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
+        fun bindViewHolder(date: String) {
+            binding.todoHeaderDateTextView.text =
+                "${date.substring(0, 4)}년 ${date.substring(4, 6)}월 ${date.substring(6, 8)}일"
+        }
+    }
+
     inner class ListViewHolder(private val binding: ItemTodoListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        // header set need
 
         @SuppressLint("NotifyDataSetChanged")
         fun bindViewHolder(data: TodoModel) {
@@ -65,6 +114,9 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
                     if (data.isComplete) ContextCompat.getColor(context, R.color.grey_600)
                     else ContextCompat.getColor(context, R.color.blue_grey_800)
                 )
+                todoListDeleteButton.visibility = if (data.isComplete) View.VISIBLE else View.GONE
+
+                // 삭제 버튼 클릭시
                 todoListDeleteButton.setOnClickListener {
                     todoFragment.showCancelTodoDialog(
                         date =
@@ -76,6 +128,8 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
                         todoCode = data.date + data.title + data.message + if (data.isComplete) 1 else 0
                     )
                 }
+
+                // 완료 상태 변경
                 todoLayout.setOnClickListener {
                     todoFragment.changeIsCompleteTodo(
                         data.date + data.title + data.message + if (data.isComplete) 1 else 0
@@ -83,5 +137,15 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
                 }
             }
         }
+    }
+
+    sealed class HeaderItem {
+        data class Header(val text: String) : HeaderItem()
+        data class Item(val todoModel: TodoModel) : HeaderItem()
+    }
+
+    companion object {
+        private const val VIEW_TYPE_HEADER = 0
+        private const val VIEW_TYPE_ITEM = 1
     }
 }

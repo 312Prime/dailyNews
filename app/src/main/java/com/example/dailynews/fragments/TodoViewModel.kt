@@ -13,7 +13,7 @@ class TodoViewModel(
     private val _isListEmpty = MutableStateFlow(false)
     val isListEmpty = _isListEmpty.asLiveData()
 
-    fun saveTodoList(todoModel: TodoModel): List<TodoModel> {
+    fun saveTodoList(todoModel: TodoModel): List<TodoModel>? {
         return todoRepository.storeTodoList(todoModel)
     }
 

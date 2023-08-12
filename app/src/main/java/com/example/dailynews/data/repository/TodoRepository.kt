@@ -10,40 +10,44 @@ class TodoRepository(
     private val sharedPreferenceManager: SharedPreferenceManager
 ) : BaseRepository() {
 
-    fun storeTodoList(todoModel: TodoModel): List<TodoModel> {
+    fun storeTodoList(todoModel: TodoModel): List<TodoModel>? {
         var oldList = if (sharedPreferenceManager.todoList == "") JSONArray()
         else JSONArray(sharedPreferenceManager.todoList)
 
+        // new todoModel 을 JSONArray 에 추가할 String 으로 변환
+        var newTitle = todoModel.title
+        // title 의 10자 보다 작은 만큼 space 추가
+        for (i in 0 until 10 - todoModel.title.length) newTitle = "$newTitle "
+        val currentTodoString =
+            todoModel.date + newTitle + todoModel.message + if (todoModel.isComplete) "1" else "0"
+
         val newList = JsonArray()
         val newModel = mutableListOf<TodoModel>()
+
+        // 같은 제목이 있으면 return null 반환 -> fragment 에서 경고 메시지
         for (i in 0 until oldList.length()) {
+            if (oldList.optString(i) == currentTodoString)
+                return null
+            else if (oldList.optString(i) ==
+                currentTodoString.substring(0, currentTodoString.length - 1)
+                + if (todoModel.isComplete) "0" else "1"
+            ) return null
+
             newList.add(oldList.optString(i))
         }
 
-        val newDate = todoModel.date
-        var newTitle = todoModel.title
-        for (i in 0 until 10 - todoModel.title.length) newTitle = "$newTitle "
-        val newMessage = todoModel.message
-        val newIsComplete = if (todoModel.isComplete) "1" else "0"
+        newList.add(currentTodoString)
 
-        newList.add(newDate + newTitle + newMessage + newIsComplete)
-
+        // sharedPreferenceManager Update
         sharedPreferenceManager.todoList = newList.toString()
 
         oldList = JSONArray(sharedPreferenceManager.todoList)
         for (i in 0 until oldList.length()) {
-            val cData = oldList.optString(i)
-            if (cData.length > 18) newModel.add(
-                TodoModel(
-                    date = cData.substring(0, 8),
-                    title = cData.substring(8, 18),
-                    message = if (cData.length == 19) ""
-                    else cData.substring(18, cData.length - 1),
-                    isComplete = cData.last() == '1'
-                )
-            )
+            val newData = oldList.optString(i)
+            if (newData.length > 18) newModel.add(convertToModel(newData, newData.last() == '1'))
         }
-        return newModel
+        // 날짜 순으로 정렬 반환
+        return newModel.apply { sortBy { it.date } }
     }
 
     fun initTodoList(): List<TodoModel> {
@@ -51,17 +55,15 @@ class TodoRepository(
         else JSONArray(sharedPreferenceManager.todoList)
         val todoModel = mutableListOf<TodoModel>()
         for (i in 0 until todoList.length()) {
-            if (todoList.optString(i).length > 14) todoModel.add(
-                TodoModel(
-                    date = todoList.optString(i).substring(0, 8),
-                    title = todoList.optString(i).substring(8, 18),
-                    message = if (todoList.optString(i).length == 19) ""
-                    else todoList.optString(i).substring(18, todoList.optString(i).length - 1),
-                    isComplete = todoList.optString(i).last() == '1'
+            if (todoList.optString(i).length > 14)
+                todoModel.add(
+                    convertToModel(
+                        optString = todoList.optString(i),
+                        isComplete = todoList.optString(i).last() == '1'
+                    )
                 )
-            )
         }
-        return todoModel
+        return todoModel.apply { sortBy { it.date } }
     }
 
     fun deleteTodoList(todoListString: String): List<TodoModel> {
@@ -72,18 +74,14 @@ class TodoRepository(
             if (todoListString != oldList.optString(i)) {
                 newList.add(oldList.optString(i))
                 newModel.add(
-                    TodoModel(
-                        date = oldList.optString(i).substring(0, 8),
-                        title = oldList.optString(i).substring(8, 18),
-                        message = if (oldList.optString(i).length == 19) ""
-                        else oldList.optString(i).substring(18, oldList.optString(i).length - 1),
-                        isComplete = oldList.optString(i).last() == '1'
-                    )
+                    convertToModel(oldList.optString(i), oldList.optString(i).last() == '1')
                 )
             }
         }
+
+        // sharedPreferenceManager Update
         sharedPreferenceManager.todoList = newList.toString()
-        return newModel
+        return newModel.apply { sortBy { it.date } }
     }
 
     // 할 일 완료 상태 변경
@@ -102,8 +100,10 @@ class TodoRepository(
                 )
             }
         }
+
+        // sharedPreferenceManager Update
         sharedPreferenceManager.todoList = newList.toString()
-        return newModel
+        return newModel.apply { sortBy { it.date } }
     }
 
     fun deleteAllTodoList() {

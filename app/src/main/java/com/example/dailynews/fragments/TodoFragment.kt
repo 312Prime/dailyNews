@@ -13,7 +13,6 @@ import com.example.dailynews.base.BaseFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.example.dailynews.databinding.FragmentTodoBinding
 import com.example.dailynews.model.TodoModel
-import com.example.dailynews.tools.logger.Logger
 import java.time.LocalDate
 
 class TodoFragment : BaseFragment(R.layout.fragment_todo) {
@@ -68,7 +67,7 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
             with(todoConfirmButton) {
                 setOnClickListener {
                     if (binding.todoTitleEditText.text.toString().isEmpty()) {
-                        showTitleTodoDialog()
+                        setTitleTodoDialog()
                     } else {
                         val date = binding.todoDatePicker.year.toString() +
                                 (if (binding.todoDatePicker.month + 1 < 10) "0" else "") +
@@ -81,7 +80,10 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
                             date = date,
                             isComplete = false
                         )
-                        todoAdapter.initList(viewModel.saveTodoList(newModel))
+                        // null 을 반환시 동일 내용 입력 메시지 출력 list 반환시 저장 완료
+                        viewModel.saveTodoList(newModel).also {
+                            if (it == null) sameTitleTodoDialog() else todoAdapter.initList(it)
+                        }
                         resetDatePicker()
                         resetTodoLayout(false)
                     }
@@ -102,13 +104,23 @@ class TodoFragment : BaseFragment(R.layout.fragment_todo) {
         todoAdapter.initList(viewModel.switchTodo(todoCode, todoCode.last() != '1'))
     }
 
-    private fun showTitleTodoDialog() {
+    // 제목 미입력 팝업
+    private fun setTitleTodoDialog() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("제목을 입력해주세요").setPositiveButton("확인") { _, _ ->
         }
         builder.show()
-    }// 알람 삭제 팝업
+    }
 
+    // 제목 미입력 팝업
+    private fun sameTitleTodoDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("동일한 항목이 존재합니다").setPositiveButton("확인") { _, _ ->
+        }
+        builder.show()
+    }
+
+    // 알람 삭제 팝업
     fun showCancelTodoDialog(date: String, title: String, message: String, todoCode: String) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("할 일을 삭제하시겠습니까?").setMessage("$date \n$title \n$message")
