@@ -40,14 +40,10 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
     private lateinit var pendingIntent: PendingIntent
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAlarmBinding.inflate(
-            inflater,
-            container,
-            false
+            inflater, container, false
         )
         return binding.root
     }
@@ -90,17 +86,27 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
             // 알람 확인 버튼
             with(alarmConfirmButton) {
                 setOnClickListener {
+                    // 현재 시간 보다 이른 시간 이면 내일 알람 설정 그렇지 않으면 오늘 알람 설정
+                    val setDate =
+                        if (alarmTimePicker.hour <= LocalTime.now().hour && alarmTimePicker.minute <= LocalTime.now().minute)
+                            LocalDate.now().plusDays(1)
+                        else LocalDate.now()
+
+                    // 알람 설정 시간
                     val setTime =
-                        "${LocalDate.now()} ${alarmTimePicker.hour}:${alarmTimePicker.minute}:00"
-                    val currentTime = (
-                            LocalTime.now().toString().replace(":", "")
-                                .replace(".", "").substring(0, 9)).toInt()
+                        "$setDate ${alarmTimePicker.hour}:${alarmTimePicker.minute}:00"
+
+                    // 알람 코드 (현재 시간)
+                    val currentTime = (LocalTime.now().toString().replace(":", "").replace(".", "")
+                        .substring(0, 9)).toInt()
+
+                    // 알람 모델 생성
                     val newAlarm = AlarmItemsModel(
-                        time = (if (alarmTimePicker.hour < 10) "0" else "") + "${alarmTimePicker.hour}"
-                                + (if (alarmTimePicker.minute < 10) "0" else "") + "${alarmTimePicker.minute}",
+                        time = (if (alarmTimePicker.hour < 10) "0" else "") + "${alarmTimePicker.hour}" + (if (alarmTimePicker.minute < 10) "0" else "") + "${alarmTimePicker.minute}",
                         content = alarmEditText.text.toString(),
                         alarmCode = currentTime
                     )
+
                     callAlarm(setTime, currentTime, alarmEditText.text.toString())
                     alarmAdapter.initList(viewModel.saveAlarmList(newAlarm))
                     resetTime()
@@ -131,17 +137,11 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
 
         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.getBroadcast(
-                context,
-                alarmCode,
-                receiverIntent,
-                PendingIntent.FLAG_IMMUTABLE
+                context, alarmCode, receiverIntent, PendingIntent.FLAG_IMMUTABLE
             )
         } else {
             PendingIntent.getBroadcast(
-                context,
-                alarmCode,
-                receiverIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                context, alarmCode, receiverIntent, PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
 
@@ -156,29 +156,24 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
         val calendar = Calendar.getInstance()
         calendar.time = dateTime
 
+        Logger.debug("DTE $calendar")
+
         alarmManager.setInexactRepeating(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
-            pendingIntent
+            AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent
         )
 
         alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            pendingIntent
+            AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent
         )
     }
 
     // 알람 삭제 팝업
     fun showCancelAlarmDialog(content: String, alarmTime: String, alarmCode: Int) {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("알람을 삭제하시겠습니까?")
-            .setMessage("$alarmTime \n$content")
+        builder.setTitle("알람을 삭제하시겠습니까?").setMessage("$alarmTime \n$content")
             .setPositiveButton("삭제") { _, _ ->
                 cancelAlarm(alarmCode)
-            }
-            .setNegativeButton("취소") { _, _ ->
+            }.setNegativeButton("취소") { _, _ ->
             }
         builder.show()
     }
@@ -192,10 +187,7 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
             PendingIntent.getBroadcast(context, alarmCode, intent, PendingIntent.FLAG_IMMUTABLE)
         } else {
             PendingIntent.getBroadcast(
-                context,
-                alarmCode,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                context, alarmCode, intent, PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
 
@@ -206,13 +198,16 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
     // 알람 설정 Layout 열기/닫기
     private fun resetAlarmLayout(visibility: Boolean? = true) {
         binding.alarmEditText.setText("")
-        binding.alarmAddLayout.visibility =
-            if (visibility == true) View.VISIBLE else View.GONE
+        binding.alarmAddLayout.visibility = if (visibility == true) View.VISIBLE else View.GONE
     }
 
     // 알람 설정 TimePicker 초기화
     private fun resetTime() {
         binding.alarmTimePicker.hour = LocalTime.now().hour
         binding.alarmTimePicker.minute = LocalTime.now().minute
+    }
+
+    companion object {
+        const val DAY_TIME_MILLS = 86400
     }
 }

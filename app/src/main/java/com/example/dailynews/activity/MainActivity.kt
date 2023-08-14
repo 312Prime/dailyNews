@@ -46,13 +46,17 @@ class MainActivity : BaseActivity() {
         setObserver()
     }
 
+    // binding 설정
     private fun setBinding() {
         with(binding) {
             setContentView(this.root)
 
+            // 최초 날씨 fragment set
             supportFragmentManager.commit {
                 replace(frameLayoutId, getFragment("날씨"))
             }
+
+            // bottom Navigation binding
             mainBottomNavigationView.setOnItemSelectedListener {
                 switchToFragment(it.toString())
                 true
@@ -113,9 +117,7 @@ class MainActivity : BaseActivity() {
     // 데이터 불러오기
     private fun initData() {
         thread(start = true) {
-            for (i in 1..1) {
-                Thread.sleep(1000)
-            }
+            Thread.sleep(1000)
             isReady = true
         }
     }
@@ -136,6 +138,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    // bottom navigation 을 통해 fragment 이동
     private fun getFragment(fragmentId: String): Fragment {
         return when (fragmentId) {
             "날씨" -> WeatherFragment()

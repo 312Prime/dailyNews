@@ -47,8 +47,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
             inflater, container, false
         )
         locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
-
-        lifecycleScope.launchWhenStarted { setObserver() }
+        setObserver()
         return binding.root
     }
 
@@ -103,39 +102,41 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
     @SuppressLint("SetTextI18n")
     private fun setObserver() {
-        viewModel.loading.observe(viewLifecycleOwner) {
-            binding.weatherLoadingFrameLayout.isVisible = it
-        }
-
-        // 도시 정보 observe
-        var currentCityName = ""
-        viewModel.cityName.observe(viewLifecycleOwner) { cityName ->
-            binding.weatherCityName.text = cityName
-            if (viewModel.cityName.value != currentCityName) {
-                currentCityName = viewModel.cityName.value!!
-                // 날씨 정보 호출
-                viewModel.getWeatherInfoView(cityName, getString(R.string.weather_key))
+        lifecycleScope.launchWhenStarted {
+            viewModel.loading.observe(viewLifecycleOwner) {
+                binding.weatherLoadingFrameLayout.isVisible = it
             }
-        }
 
-        viewModel.responseWeather.observe(viewLifecycleOwner) { model ->
-            if (model != null) {
-                // 날씨 예보 호출
-                viewModel.getForecastInfoView(
-                    viewModel.cityName.value!!, getString(R.string.weather_key)
-                )
-                setWeatherData(model)
-                binding.weatherTemperatureState.text =
-                    if (model.main.temp == null) "미확인" else "%.1f 'c".format(model.main.temp!! - 273.15)
-                binding.weatherCloudShapeState.text = model.weather[0].description
-                binding.weatherWindState.text = model.wind.speed.toString() + " m/s"
-                binding.weatherCloudState.text = model.clouds.all.toString() + " %"
-                binding.weatherHumidity.text = model.main.humidity.toString() + " %"
+            // 도시 정보 observe
+            var currentCityName = ""
+            viewModel.cityName.observe(viewLifecycleOwner) { cityName ->
+                binding.weatherCityName.text = cityName
+                if (viewModel.cityName.value != currentCityName) {
+                    currentCityName = viewModel.cityName.value!!
+                    // 날씨 정보 호출
+                    viewModel.getWeatherInfoView(cityName, getString(R.string.weather_key))
+                }
             }
-        }
 
-        viewModel.responseForecast.observe(viewLifecycleOwner) { model ->
-            if (model?.list != null) weatherAdapter.initList(model.list!!)
+            viewModel.responseWeather.observe(viewLifecycleOwner) { model ->
+                if (model != null) {
+                    // 날씨 예보 호출
+                    viewModel.getForecastInfoView(
+                        viewModel.cityName.value!!, getString(R.string.weather_key)
+                    )
+                    setWeatherData(model)
+                    binding.weatherTemperatureState.text =
+                        if (model.main.temp == null) "미확인" else "%.1f 'c".format(model.main.temp!! - 273.15)
+                    binding.weatherCloudShapeState.text = model.weather[0].description
+                    binding.weatherWindState.text = model.wind.speed.toString() + " m/s"
+                    binding.weatherCloudState.text = model.clouds.all.toString() + " %"
+                    binding.weatherHumidity.text = model.main.humidity.toString() + " %"
+                }
+            }
+
+            viewModel.responseForecast.observe(viewLifecycleOwner) { model ->
+                if (model?.list != null) weatherAdapter.initList(model.list!!)
+            }
         }
     }
 
