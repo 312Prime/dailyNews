@@ -156,8 +156,6 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
         val calendar = Calendar.getInstance()
         calendar.time = dateTime
 
-        Logger.debug("DTE $calendar")
-
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent
         )
@@ -205,9 +203,5 @@ class AlarmFragment : BaseFragment(R.layout.fragment_alarm) {
     private fun resetTime() {
         binding.alarmTimePicker.hour = LocalTime.now().hour
         binding.alarmTimePicker.minute = LocalTime.now().minute
-    }
-
-    companion object {
-        const val DAY_TIME_MILLS = 86400
     }
 }

@@ -20,10 +20,8 @@ class AlarmRepository(
         val newList = JsonArray()
         // 반환할 알람 데이터 모델
         val newModel = mutableListOf<AlarmItemsModel>()
-        // 새로운 알람 리스트에 기존 알람 추가
-        for (i in 0 until oldList.length()) {
-            newList.add(oldList.optString(i))
-        }
+        // 새로운 알람 list 에 기존 알람 추가
+        for (i in 0 until oldList.length()) newList.add(oldList.optString(i))
         // 새로운 알람 목록에 새로운 알람 추가
         newList.add(alarmItemsModel.time + alarmItemsModel.alarmCode.toString() + alarmItemsModel.content)
         // storage 에 새로운 알람 리스트 덮어쓰기
@@ -40,7 +38,8 @@ class AlarmRepository(
                 )
             )
         }
-        return newModel
+        // 정렬 후 반환
+        return newModel.apply { sortBy { it.time } }
     }
 
     // 알람 목록 초기화
@@ -58,7 +57,7 @@ class AlarmRepository(
                 )
             )
         }
-        return alarmModel
+        return alarmModel.apply { sortBy { it.time } }
     }
 
     // 알람 삭제
@@ -80,11 +79,6 @@ class AlarmRepository(
             }
         }
         sharedPreferenceManager.alarmList = newList.toString()
-        return newModel
-    }
-
-    // 모든 알람 삭제
-    fun deleteAllAlarm(){
-        sharedPreferenceManager.clearAlarm()
+        return newModel.apply { sortBy { it.time } }
     }
 }

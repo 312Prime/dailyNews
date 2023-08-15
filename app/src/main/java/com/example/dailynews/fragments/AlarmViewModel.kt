@@ -30,10 +30,4 @@ class AlarmViewModel(
         return alarmRepository.deleteAlarmList(alarmCode)
             .also { _isListEmpty.value = it.isEmpty() }
     }
-
-    // 모든 알람 삭제
-    fun deleteAllAlarm() {
-        alarmRepository.deleteAllAlarm()
-        _isListEmpty.value = true
-    }
 }
