@@ -43,11 +43,6 @@ android {
             buildConfig true
         }
     }
-//    packagingOptions {
-//        resources {
-//            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-//        }
-//    }
     namespace 'com.example.dailynews'
 }
 
@@ -59,9 +54,9 @@ dependencies {
     implementation(networkDeps)
     implementation(koinDeps)
 
+    // Glide
     implementation deps.glide.core
     implementation deps.glide.okhttp
-    // 그래들 비호환
     kapt deps.glide.compiler
 
     // 3rd-party
