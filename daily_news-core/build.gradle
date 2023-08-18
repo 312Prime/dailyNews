@@ -36,8 +36,4 @@ dependencies {
 
     implementation(jetpackDeps)
     implementation 'androidx.databinding:databinding-runtime:8.0.2'
-
-    // testing
-    testImplementation(testDeps)
-    androidTestImplementation(androidTestDeps)
 }

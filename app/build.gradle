@@ -23,10 +23,20 @@ android {
         }
     }
 
+    signingConfigs{
+        release{
+            storeFile file('dailyNewsKey')
+            storePassword "312daa"
+            keyAlias "key0"
+            keyPassword "312daa"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -62,10 +72,6 @@ dependencies {
     // 3rd-party
     implementation deps.lottie
     implementation deps.exoplayer
-
-    // testing
-    testImplementation(testDeps)
-    androidTestImplementation(androidTestDeps)
 
     // leak-canary, chucker
     debugImplementation deps.leakcanary
