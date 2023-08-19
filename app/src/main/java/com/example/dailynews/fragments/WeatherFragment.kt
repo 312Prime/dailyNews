@@ -24,6 +24,7 @@ import com.example.dailynews.adapter.WeatherAdapter
 import com.example.dailynews.base.BaseFragment
 import com.example.dailynews.databinding.FragmentWeatherBinding
 import com.example.dailynews.model.WeatherModel
+import com.example.dailynews.tools.logger.Logger
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.util.Locale
@@ -141,9 +142,19 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     }
 
     // 도시 이름 가져오기
-    @SuppressLint("MissingPermission")
     private fun getCityName() {
         if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(requireContext(), "위치 서비스를 허용해 주세요", Toast.LENGTH_SHORT).show()
+                return
+            }
             locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener
             )
