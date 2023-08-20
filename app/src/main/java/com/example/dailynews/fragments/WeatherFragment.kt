@@ -3,22 +3,27 @@ package com.example.dailynews.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context.LOCATION_SERVICE
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.example.dailynews.BuildConfig
 import com.example.dailynews.R
 import com.example.dailynews.adapter.WeatherAdapter
 import com.example.dailynews.base.BaseFragment
@@ -60,22 +65,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
     override fun onResume() {
         super.onResume()
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // 위치 권한이 없을 경우 권한 요청
-            ActivityCompat.requestPermissions(
-                requireActivity(), arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ), REQUEST_LOCATION_PERMISSION
-            )
-        } else {
-            getCityName()
-        }
+        getCityName()
     }
 
     override fun onPause() {
@@ -152,8 +142,31 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Toast.makeText(requireContext(), "위치 서비스를 허용해 주세요", Toast.LENGTH_SHORT).show()
-                return
+                // 위치 권한이 없을 경우 권한 요청
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        requireActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) &&
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        requireActivity(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                ) {
+                    Toast.makeText(
+                        requireContext(),
+                        "위치 권한이 필요합니다. 설정에서 허용해주세요",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+
+                // 권한 요청
+                ActivityCompat.requestPermissions(
+                    requireActivity(), arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ), REQUEST_LOCATION_PERMISSION
+                )
             }
             locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener
