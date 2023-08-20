@@ -15,18 +15,24 @@ class TodoViewModel(
 
     fun saveTodoList(todoModel: TodoModel): List<TodoModel>? {
         return todoRepository.storeTodoList(todoModel)
+            .also {
+                if (it != null) { _isListEmpty.value = it.isEmpty() }
+            }
     }
 
     fun initTodoList(): List<TodoModel> {
         return todoRepository.initTodoList()
+            .also { _isListEmpty.value = it.isEmpty() }
     }
 
     fun deleteTodoList(todoListString: String): List<TodoModel> {
         return todoRepository.deleteTodoList(todoListString)
+            .also { _isListEmpty.value = it.isEmpty() }
     }
 
     fun switchTodo(todoCode: String, isCompleteTo: Boolean): List<TodoModel> {
         return todoRepository.switchTodoList(todoCode, isCompleteTo)
+            .also { _isListEmpty.value = it.isEmpty() }
     }
 
     fun deleteAllList() {
