@@ -9,7 +9,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.example.dailynews"
+        applicationId "com.da312.dailynews"
         minSdk 26
         targetSdk 32
         versionCode 1
@@ -53,7 +53,7 @@ android {
             buildConfig true
         }
     }
-    namespace 'com.example.dailynews'
+    namespace 'com.da312.dailynews'
 }
 
 dependencies {

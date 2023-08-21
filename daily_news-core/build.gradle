@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.daily_news_core'
+    namespace 'com.da312.daily_news_core'
     compileSdk 32
 
     defaultConfig {
