@@ -8,31 +8,31 @@
     <string name="intro_title">DAILY NEWS\n오늘의 뉴스</string>
 
     <!--    날씨      -->
+    <string name="weather_title">오늘의 날씨</string>
     <string name="weather_url">http://api.openweathermap.org/</string>
     <string name="weather_key">fb3803403b871b34a30c7c61743e57e8</string>
-    <string name="weather_title">오늘의 날씨</string>
     <string name="weather_country">대한민국</string>
 
     <!--    뉴스      -->
     <string name="news_title">오늘의 뉴스</string>
     <string name="news_close_button">닫기</string>
-    <string name="alarm_title">알람</string>
 
     <!--    알람     -->
+    <string name="alarm_title">알람</string>
     <string name="alarm_add">알람 추가하기</string>
     <string name="alarm_memo_hint">메모를 입력해주세요</string>
     <string name="alarm_list_delete">지우기</string>
+    <string name="alarm_add_hint">알람을 설정해주세요</string>
 
     <!--    할일     -->
-
-    <!--    팝업     -->
-    <string name="popup_cancel">취소</string>
-    <string name="popup_confirm">확인</string>
     <string name="todo_title">할 일</string>
     <string name="todo_add_button">할 일 추가하기</string>
     <string name="todo_spinner_hint">내용을 입력해주세요</string>
     <string name="todo_spinner_title">제목을 입력해주세요</string>
-    <string name="alarm_add_hint">알람을 설정해 주세요</string>
     <string name="todo_add_hint">할 일을 추가해주세요</string>
+
+    <!--    팝업     -->
+    <string name="popup_cancel">취소</string>
+    <string name="popup_confirm">확인</string>
 
 </resources>
