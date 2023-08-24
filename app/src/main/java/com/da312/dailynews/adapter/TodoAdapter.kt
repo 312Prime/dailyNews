@@ -24,6 +24,7 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
         viewType: Int
     ): RecyclerView.ViewHolder {
         return when (viewType) {
+            // header ViewHolder
             VIEW_TYPE_HEADER -> {
                 HeaderViewHolder(
                     binding = ItemTodoHeaderBinding.inflate(
@@ -34,6 +35,7 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
                 )
             }
 
+            // item ViewHolder
             VIEW_TYPE_ITEM -> {
                 ListViewHolder(
                     binding = ItemTodoListBinding.inflate(
@@ -51,11 +53,12 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         todoItems.getOrNull(position)?.let {
             when (holder) {
+                // header ViewHolder
                 is HeaderViewHolder -> {
                     val headerItem = it as HeaderItem.Header
                     holder.bindViewHolder(headerItem.text)
                 }
-
+                // item ViewHolder
                 is ListViewHolder -> {
                     val listItem = it as HeaderItem.Item
                     holder.bindViewHolder(listItem.todoModel)
@@ -91,6 +94,7 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
         notifyDataSetChanged()
     }
 
+    // Header ViewHolder set
     inner class HeaderViewHolder(private val binding: ItemTodoHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
@@ -100,6 +104,7 @@ class TodoAdapter(val context: Context, val todoFragment: TodoFragment) :
         }
     }
 
+    // item ViewHolder set
     inner class ListViewHolder(private val binding: ItemTodoListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
